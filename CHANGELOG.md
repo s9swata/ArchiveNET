@@ -11,11 +11,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Project Structure**: Moved setup scripts to `scripts/` directory for better organization
 - Updated package.json to reference scripts from new location
 - Updated README.md with new script paths and project structure documentation
-- Updated .npmignore to exclude setup script from npm package (development tool only)
 
 ### Fixed
+- **NPM Package**: Fixed setup script inclusion in npm package (removed from .npmignore)
+- **Setup Script**: Enhanced to handle both development and npm package scenarios
+- **Path Resolution**: Improved project root detection for different installation contexts
+- **Environment Setup**: Added automatic .env file creation for npm package users
 - Improved project organization and maintainability
 - Cleaner separation between runtime code and development tools
+
+### Added
+- **Smart Path Detection**: Setup script now works in both development and npm package contexts
+- **Auto .env Creation**: Automatically creates .env template if missing
+- **Better Error Messages**: More helpful guidance for missing files and configuration
 
 ## [1.0.0] - 2025-01-24
 

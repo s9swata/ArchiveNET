@@ -11,11 +11,29 @@ const __dirname = path.dirname(__filename);
 
 class UnifiedMCPSetup {
   constructor() {
-    this.projectPath = __dirname;
+    // Handle both development and npm package scenarios
+    this.projectPath = this.findProjectRoot(__dirname);
     this.distPath = path.join(this.projectPath, 'dist');
     this.serverPath = path.join(this.distPath, 'index.js');
     this.envPath = path.join(this.projectPath, '.env');
     this.supportedLLMs = ['claude', 'cursor'];
+  }
+
+  // Find the project root (handles both dev and npm package scenarios)
+  findProjectRoot(startDir) {
+    let currentDir = startDir;
+    
+    // Go up one level from scripts/ directory
+    const parentDir = path.dirname(currentDir);
+    
+    // Check if we're in an npm package (look for dist/ and package.json)
+    if (fs.existsSync(path.join(parentDir, 'dist')) && 
+        fs.existsSync(path.join(parentDir, 'package.json'))) {
+      return parentDir;
+    }
+    
+    // If not found, assume we're in development mode
+    return parentDir;
   }
 
   // Parse command line arguments
@@ -51,6 +69,8 @@ Options:
 Environment:
   Make sure you have a .env file with your API endpoints configured.
   Copy .env.example to .env and update the values.
+
+Note: If .env file doesn't exist, you'll be prompted to create one.
 `);
   }
 
@@ -94,9 +114,13 @@ Environment:
     console.log('🔍 Checking required files...');
     
     const requiredFiles = [
-      { path: this.serverPath, name: 'MCP Server (dist/index.js)' },
-      { path: this.envPath, name: 'Environment file (.env)' }
+      { path: this.serverPath, name: 'MCP Server (dist/index.js)' }
     ];
+
+    // .env file is optional for npm packages
+    if (fs.existsSync(path.join(this.projectPath, '.env.example'))) {
+      requiredFiles.push({ path: this.envPath, name: 'Environment file (.env)' });
+    }
 
     const missing = [];
     for (const file of requiredFiles) {
@@ -112,11 +136,12 @@ Environment:
       missing.forEach(file => console.error(`   - ${file}`));
       
       if (missing.includes('MCP Server (dist/index.js)')) {
-        console.log('\n💡 Run "npm run build" to build the server first.');
+        console.log('\n💡 The MCP server needs to be built. Run "npm run build" first.');
       }
       
       if (missing.includes('Environment file (.env)')) {
-        console.log('\n💡 Copy .env.example to .env and configure your endpoints.');
+        console.log('\n💡 You need to configure your API endpoints.');
+        console.log('   Create a .env file with your INSERT_CONTEXT_ENDPOINT and SEARCH_CONTEXT_ENDPOINT');
       }
       
       return false;
@@ -125,9 +150,42 @@ Environment:
     return true;
   }
 
+  // Create a basic .env file if it doesn't exist
+  createEnvFile() {
+    const envExamplePath = path.join(this.projectPath, '.env.example');
+    
+    if (fs.existsSync(envExamplePath)) {
+      console.log('📝 Creating .env file from template...');
+      fs.copyFileSync(envExamplePath, this.envPath);
+      console.log('✅ Created .env file. Please edit it with your API endpoints.');
+      return true;
+    } else {
+      console.log('📝 Creating basic .env file...');
+      const basicEnv = `# ArchiveNet API Configuration
+INSERT_CONTEXT_ENDPOINT=https://your-api.com/insert
+SEARCH_CONTEXT_ENDPOINT=https://your-api.com/search
+# Optional: API key for authentication
+# API_KEY=your-api-key-here
+# Optional: Request timeout in milliseconds
+API_TIMEOUT=30000
+`;
+      fs.writeFileSync(this.envPath, basicEnv);
+      console.log('✅ Created basic .env file. Please edit it with your actual API endpoints.');
+      return true;
+    }
+  }
+
   // Read environment variables from .env file
   readEnvFile() {
     console.log('📖 Reading environment configuration...');
+    
+    // Create .env file if it doesn't exist
+    if (!fs.existsSync(this.envPath)) {
+      console.log('⚠️  No .env file found. Creating one...');
+      this.createEnvFile();
+      console.log('\n🛑 Please edit the .env file with your actual API endpoints and run the setup again.');
+      return null;
+    }
     
     try {
       const envContent = fs.readFileSync(this.envPath, 'utf8');
@@ -145,11 +203,12 @@ Environment:
 
       // Validate required environment variables
       const required = ['INSERT_CONTEXT_ENDPOINT', 'SEARCH_CONTEXT_ENDPOINT'];
-      const missing = required.filter(key => !envVars[key]);
+      const missing = required.filter(key => !envVars[key] || envVars[key].includes('your-api.com'));
       
       if (missing.length > 0) {
-        console.error('❌ Missing required environment variables:');
+        console.error('❌ Missing or unconfigured environment variables:');
         missing.forEach(key => console.error(`   - ${key}`));
+        console.log('\n💡 Please edit your .env file with actual API endpoints.');
         return null;
       }
 
@@ -301,19 +360,27 @@ Environment:
     }
   }
 
-  // Build the MCP server if needed
+  // Build the MCP server if needed (only in development)
   buildServer() {
     if (!fs.existsSync(this.serverPath)) {
-      console.log('🔨 Building MCP server...');
-      try {
-        execSync('npm run build', { cwd: this.projectPath, stdio: 'inherit' });
-        console.log('✅ MCP server built successfully!');
-      } catch (error) {
-        console.error('❌ Failed to build MCP server:', error.message);
+      // Check if we're in a development environment
+      if (fs.existsSync(path.join(this.projectPath, 'src')) && 
+          fs.existsSync(path.join(this.projectPath, 'tsconfig.json'))) {
+        console.log('🔨 Building MCP server...');
+        try {
+          execSync('npm run build', { cwd: this.projectPath, stdio: 'inherit' });
+          console.log('✅ MCP server built successfully!');
+        } catch (error) {
+          console.error('❌ Failed to build MCP server:', error.message);
+          return false;
+        }
+      } else {
+        console.error('❌ MCP server not found and cannot build (not in development environment)');
+        console.log('💡 Make sure you have installed the package correctly.');
         return false;
       }
     } else {
-      console.log('✅ MCP server already built');
+      console.log('✅ MCP server found');
     }
     return true;
   }
@@ -324,7 +391,7 @@ Environment:
     
     try {
       // Try to run the server for a brief moment to check for errors
-      const testProcess = execSync(`node "${this.serverPath}" --help || echo "Server can be executed"`, {
+      execSync(`node "${this.serverPath}" --help || echo "Server can be executed"`, {
         cwd: this.projectPath,
         timeout: 5000,
         stdio: 'pipe'
