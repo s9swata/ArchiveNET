@@ -59,26 +59,37 @@ export declare const SearchContextSchema: z.ZodObject<{
 }>;
 export type InsertContextRequest = z.infer<typeof InsertContextSchema>;
 export type SearchContextRequest = z.infer<typeof SearchContextSchema>;
+export interface VectorMetadata {
+    context?: string;
+    tags?: string[];
+    timestamp?: string;
+    client?: string;
+    [key: string]: any;
+}
+export interface MemoryResult {
+    id: number;
+    content?: string;
+    metadata?: VectorMetadata;
+    distance?: number;
+}
 export interface ContextItem {
-    id?: string;
+    id?: string | number;
     content: string;
-    metadata?: {
-        context?: string;
-        tags?: string[];
-        timestamp?: string;
-        client?: string;
-    };
+    metadata?: VectorMetadata;
     relevanceScore?: number;
+    distance?: number;
 }
 export interface InsertContextResponse {
     success: boolean;
-    id?: string;
+    id?: string | number;
     message: string;
 }
 export interface SearchContextResponse {
-    success: boolean;
-    results: ContextItem[];
+    success?: boolean;
+    results?: ContextItem[];
     total?: number;
     message?: string;
+    data?: MemoryResult[];
+    length?: number;
 }
 //# sourceMappingURL=types.d.ts.map

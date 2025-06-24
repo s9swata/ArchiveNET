@@ -37,7 +37,24 @@ export class ContextAPIClient {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
             const result = await response.json();
-            return result;
+            // Handle different response formats
+            if (typeof result === 'object' && result !== null) {
+                // If it's already in the expected format
+                if ('success' in result) {
+                    return result;
+                }
+                // If it's a different format, normalize it
+                return {
+                    success: true,
+                    id: result.id || 'unknown',
+                    message: result.message || 'Context inserted successfully'
+                };
+            }
+            // Fallback for unexpected formats
+            return {
+                success: true,
+                message: 'Context inserted successfully'
+            };
         }
         catch (error) {
             if (error instanceof Error) {
@@ -73,7 +90,8 @@ export class ContextAPIClient {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
             const result = await response.json();
-            return result;
+            // Handle your backend's response format
+            return this.normalizeSearchResponse(result);
         }
         catch (error) {
             if (error instanceof Error) {
@@ -84,6 +102,71 @@ export class ContextAPIClient {
             }
             throw new Error('Search context failed: Unknown error');
         }
+    }
+    normalizeSearchResponse(result) {
+        // Handle direct array response (your format)
+        if (Array.isArray(result)) {
+            const normalizedResults = result.map((item) => ({
+                id: item.id?.toString(),
+                content: item.content || '',
+                metadata: item.metadata,
+                relevanceScore: item.distance ? (1 - item.distance) : undefined, // Convert distance to relevance score
+                distance: item.distance
+            }));
+            return {
+                success: true,
+                results: normalizedResults,
+                total: result.length,
+                message: 'Search completed successfully'
+            };
+        }
+        // Handle object response with results array
+        if (result && typeof result === 'object') {
+            // If it's already in the expected format
+            if ('success' in result && 'results' in result) {
+                return result;
+            }
+            // If it has a data field with results
+            if ('data' in result && Array.isArray(result.data)) {
+                const normalizedResults = result.data.map((item) => ({
+                    id: item.id?.toString(),
+                    content: item.content || '',
+                    metadata: item.metadata,
+                    relevanceScore: item.distance ? (1 - item.distance) : undefined,
+                    distance: item.distance
+                }));
+                return {
+                    success: true,
+                    results: normalizedResults,
+                    total: result.data.length,
+                    message: result.message || 'Search completed successfully'
+                };
+            }
+            // If it has results directly
+            if ('results' in result && Array.isArray(result.results)) {
+                const normalizedResults = result.results.map((item) => ({
+                    id: item.id?.toString(),
+                    content: item.content || '',
+                    metadata: item.metadata,
+                    relevanceScore: item.distance ? (1 - item.distance) : item.relevanceScore,
+                    distance: item.distance
+                }));
+                return {
+                    success: result.success !== false,
+                    results: normalizedResults,
+                    total: result.total || result.results.length,
+                    message: result.message || 'Search completed successfully'
+                };
+            }
+        }
+        // Fallback for unexpected formats
+        console.warn('Unexpected search response format:', result);
+        return {
+            success: false,
+            results: [],
+            total: 0,
+            message: 'Unexpected response format from search endpoint'
+        };
     }
 }
 //# sourceMappingURL=api-client.js.map

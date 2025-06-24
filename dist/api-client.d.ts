@@ -4,5 +4,6 @@ export declare class ContextAPIClient {
     constructor();
     insertContext(request: InsertContextRequest): Promise<InsertContextResponse>;
     searchContext(request: SearchContextRequest): Promise<SearchContextResponse>;
+    private normalizeSearchResponse;
 }
 //# sourceMappingURL=api-client.d.ts.map

@@ -3,7 +3,9 @@ import type {
   InsertContextRequest, 
   SearchContextRequest, 
   InsertContextResponse, 
-  SearchContextResponse 
+  SearchContextResponse,
+  MemoryResult,
+  ContextItem
 } from './types.js';
 
 export class ContextAPIClient {
@@ -51,8 +53,28 @@ export class ContextAPIClient {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
-      const result = await response.json() as InsertContextResponse;
-      return result;
+      const result = await response.json();
+      
+      // Handle different response formats
+      if (typeof result === 'object' && result !== null) {
+        // If it's already in the expected format
+        if ('success' in result) {
+          return result as InsertContextResponse;
+        }
+        
+        // If it's a different format, normalize it
+        return {
+          success: true,
+          id: result.id || 'unknown',
+          message: result.message || 'Context inserted successfully'
+        };
+      }
+      
+      // Fallback for unexpected formats
+      return {
+        success: true,
+        message: 'Context inserted successfully'
+      };
     } catch (error) {
       if (error instanceof Error) {
         if (error.name === 'AbortError') {
@@ -92,8 +114,10 @@ export class ContextAPIClient {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
-      const result = await response.json() as SearchContextResponse;
-      return result;
+      const result = await response.json();
+      
+      // Handle your backend's response format
+      return this.normalizeSearchResponse(result);
     } catch (error) {
       if (error instanceof Error) {
         if (error.name === 'AbortError') {
@@ -103,5 +127,78 @@ export class ContextAPIClient {
       }
       throw new Error('Search context failed: Unknown error');
     }
+  }
+
+  private normalizeSearchResponse(result: any): SearchContextResponse {
+    // Handle direct array response (your format)
+    if (Array.isArray(result)) {
+      const normalizedResults: ContextItem[] = result.map((item: MemoryResult) => ({
+        id: item.id?.toString(),
+        content: item.content || '',
+        metadata: item.metadata,
+        relevanceScore: item.distance ? (1 - item.distance) : undefined, // Convert distance to relevance score
+        distance: item.distance
+      }));
+
+      return {
+        success: true,
+        results: normalizedResults,
+        total: result.length,
+        message: 'Search completed successfully'
+      };
+    }
+
+    // Handle object response with results array
+    if (result && typeof result === 'object') {
+      // If it's already in the expected format
+      if ('success' in result && 'results' in result) {
+        return result as SearchContextResponse;
+      }
+
+      // If it has a data field with results
+      if ('data' in result && Array.isArray(result.data)) {
+        const normalizedResults: ContextItem[] = result.data.map((item: MemoryResult) => ({
+          id: item.id?.toString(),
+          content: item.content || '',
+          metadata: item.metadata,
+          relevanceScore: item.distance ? (1 - item.distance) : undefined,
+          distance: item.distance
+        }));
+
+        return {
+          success: true,
+          results: normalizedResults,
+          total: result.data.length,
+          message: result.message || 'Search completed successfully'
+        };
+      }
+
+      // If it has results directly
+      if ('results' in result && Array.isArray(result.results)) {
+        const normalizedResults: ContextItem[] = result.results.map((item: any) => ({
+          id: item.id?.toString(),
+          content: item.content || '',
+          metadata: item.metadata,
+          relevanceScore: item.distance ? (1 - item.distance) : item.relevanceScore,
+          distance: item.distance
+        }));
+
+        return {
+          success: result.success !== false,
+          results: normalizedResults,
+          total: result.total || result.results.length,
+          message: result.message || 'Search completed successfully'
+        };
+      }
+    }
+
+    // Fallback for unexpected formats
+    console.warn('Unexpected search response format:', result);
+    return {
+      success: false,
+      results: [],
+      total: 0,
+      message: 'Unexpected response format from search endpoint'
+    };
   }
 }

@@ -134,13 +134,22 @@ export class ContextTools {
         try {
             const validatedArgs = SearchContextSchema.parse(args);
             const result = await this.apiClient.searchContext(validatedArgs);
-            if (result.success && result.results.length > 0) {
+            if (result.success && result.results && result.results.length > 0) {
                 const formattedResults = result.results.map((item, index) => {
                     const tags = item.metadata?.tags ? ` [Tags: ${item.metadata.tags.join(', ')}]` : '';
                     const context = item.metadata?.context ? ` (${item.metadata.context})` : '';
-                    const score = item.relevanceScore ? ` (Score: ${item.relevanceScore.toFixed(2)})` : '';
-                    const timestamp = item.metadata?.timestamp ? new Date(item.metadata.timestamp).toLocaleString() : 'Unknown';
-                    return `${index + 1}. **${context}**${score}\n   ${item.content}${tags}\n   _Saved: ${timestamp}_`;
+                    // Use relevanceScore if available, otherwise calculate from distance
+                    let scoreText = '';
+                    if (item.relevanceScore !== undefined) {
+                        scoreText = ` (Relevance: ${(item.relevanceScore * 100).toFixed(1)}%)`;
+                    }
+                    else if (item.distance !== undefined) {
+                        const relevance = Math.max(0, (1 - item.distance) * 100);
+                        scoreText = ` (Relevance: ${relevance.toFixed(1)}%)`;
+                    }
+                    const timestamp = item.metadata?.timestamp ?
+                        new Date(item.metadata.timestamp).toLocaleString() : 'Unknown';
+                    return `${index + 1}. **${context || 'Context'}**${scoreText}\n   ${item.content}${tags}\n   _Saved: ${timestamp}_`;
                 }).join('\n\n');
                 const total = result.total || result.results.length;
                 return {
@@ -152,7 +161,7 @@ export class ContextTools {
                     ],
                 };
             }
-            else if (result.success && result.results.length === 0) {
+            else if (result.success && result.results && result.results.length === 0) {
                 return {
                     content: [
                         {
