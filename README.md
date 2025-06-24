@@ -89,9 +89,7 @@ npm run setup cursor    # For Cursor IDE
    
    Add to your Cursor MCP config file:
    
-   **macOS**: `~/Library/Application Support/Cursor/User/globalStorage/mcp.json`
-   **Windows**: `%APPDATA%\Cursor\User\globalStorage\mcp.json`
-   **Linux**: `~/.config/Cursor/User/globalStorage/mcp.json`
+   **All Platforms**: `~/.cursor/mcp.json`
    
    ```json
    {

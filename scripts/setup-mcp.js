@@ -95,11 +95,11 @@ Note: If .env file doesn't exist, you'll be prompted to create one.
       case 'cursor':
         switch (platform) {
           case 'darwin': // macOS
-            return path.join(homeDir, 'Library', 'Application Support', 'Cursor', 'User', 'globalStorage', 'mcp.json');
+            return path.join(homeDir, '.cursor', 'mcp.json');
           case 'win32': // Windows
-            return path.join(process.env.APPDATA || path.join(homeDir, 'AppData', 'Roaming'), 'Cursor', 'User', 'globalStorage', 'mcp.json');
+            return path.join(homeDir, '.cursor', 'mcp.json');
           case 'linux': // Linux
-            return path.join(homeDir, '.config', 'Cursor', 'User', 'globalStorage', 'mcp.json');
+            return path.join(homeDir, '.cursor', 'mcp.json');
           default:
             throw new Error(`Unsupported platform for Cursor: ${platform}`);
         }
