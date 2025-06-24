@@ -8,6 +8,7 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "tsx src/index.ts",
+    "setup-claude": "node setup-claude-mcp.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {

@@ -12,7 +12,25 @@ A Model Context Protocol (MCP) server that provides context insertion and search
 - **Metadata Support**: Rich metadata including context, tags, timestamps, and client info
 - **Optional Authentication**: API key authentication is optional
 
-## Setup
+## Quick Setup
+
+### Automated Setup (Recommended)
+
+Use the setup script to automatically configure Claude Desktop:
+
+```bash
+# 1. Install dependencies
+npm install
+
+# 2. Configure environment
+cp .env.example .env
+# Edit .env with your API endpoints
+
+# 3. Run automated setup
+npm run setup-claude
+```
+
+### Manual Setup
 
 1. **Install Dependencies**
    ```bash
@@ -39,15 +57,57 @@ A Model Context Protocol (MCP) server that provides context insertion and search
    npm run build
    ```
 
-4. **Run the Server**
-   ```bash
-   npm start
+4. **Configure Claude Desktop**
+   
+   Add to your Claude Desktop config file:
+   
+   **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+   **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+   **Linux**: `~/.config/Claude/claude_desktop_config.json`
+   
+   ```json
+   {
+     "mcpServers": {
+       "context-server": {
+         "command": "node",
+         "args": ["/absolute/path/to/your/project/dist/index.js"],
+         "env": {
+           "INSERT_CONTEXT_ENDPOINT": "https://your-api.com/insert",
+           "SEARCH_CONTEXT_ENDPOINT": "https://your-api.com/search",
+           "API_TIMEOUT": "30000"
+         }
+       }
+     }
+   }
    ```
 
-   For development:
-   ```bash
-   npm run dev
-   ```
+5. **Restart Claude Desktop**
+
+## Setup Scripts
+
+The project includes platform-specific setup scripts:
+
+- **Cross-platform (Node.js)**: `setup-claude-mcp.js`
+- **Unix/Linux/macOS**: `setup-claude-mcp.sh`
+- **Windows**: `setup-claude-mcp.bat`
+
+### Using Setup Scripts
+
+**Node.js script (recommended)**:
+```bash
+npm run setup-claude
+```
+
+**Unix/Linux/macOS**:
+```bash
+chmod +x setup-claude-mcp.sh
+./setup-claude-mcp.sh
+```
+
+**Windows**:
+```cmd
+setup-claude-mcp.bat
+```
 
 ## API Endpoint Requirements
 
@@ -143,6 +203,7 @@ The server is designed to work seamlessly with AI assistants that support the Mo
 - `npm run dev`: Run in development mode with hot reload
 - `npm run build`: Build TypeScript to JavaScript
 - `npm start`: Run the built server
+- `npm run setup-claude`: Run the automated Claude Desktop setup
 
 ## Error Handling
 
@@ -158,3 +219,30 @@ All errors are properly formatted and returned to the AI assistant for appropria
 ## Authentication
 
 The API key is now optional. If your API endpoints don't require authentication, simply leave the `API_KEY` environment variable unset or commented out in your `.env` file. The server will work without authentication headers.
+
+## Troubleshooting
+
+If the MCP server doesn't connect to Claude:
+
+1. **Check file paths**: Ensure all paths in the Claude config are absolute and correct
+2. **Verify endpoints**: Test your API endpoints independently
+3. **Check logs**: Look at Claude Desktop's logs for error messages
+4. **Restart Claude**: Completely restart Claude Desktop after configuration changes
+5. **Test server**: Run `node dist/index.js` to check for server errors
+6. **Permissions**: Ensure Claude Desktop has permission to execute Node.js scripts
+
+## Example Usage
+
+After setup, you can test the integration:
+
+**Saving context:**
+```
+"My favorite programming language is TypeScript and I work as a senior developer at TechCorp."
+```
+
+**Searching context:**
+```
+"What's my favorite programming language?"
+```
+
+The MCP server will automatically handle saving and retrieving this information through your configured API endpoints.
