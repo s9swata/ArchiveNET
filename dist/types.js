@@ -15,6 +15,6 @@ export const SearchContextSchema = z.object({
     k: z.number().min(1).max(100).default(5),
     filters: z.object({
         tags: z.array(z.string()).optional(),
-    }).optional(),
+    }).default({}), // Required field but defaults to empty object
 });
 //# sourceMappingURL=types.js.map

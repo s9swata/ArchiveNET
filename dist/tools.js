@@ -74,10 +74,11 @@ export class ContextTools {
                                 description: 'Filter results by specific tags',
                             },
                         },
-                        description: 'Filters to apply to the search',
+                        description: 'Filters to apply to the search (can be empty object)',
+                        default: {},
                     },
                 },
-                required: ['query'],
+                required: ['query', 'filters'],
             },
         };
     }

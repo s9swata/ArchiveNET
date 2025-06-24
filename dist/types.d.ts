@@ -37,7 +37,7 @@ export declare const InsertContextSchema: z.ZodObject<{
 export declare const SearchContextSchema: z.ZodObject<{
     query: z.ZodString;
     k: z.ZodDefault<z.ZodNumber>;
-    filters: z.ZodOptional<z.ZodObject<{
+    filters: z.ZodDefault<z.ZodObject<{
         tags: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
     }, "strip", z.ZodTypeAny, {
         tags?: string[] | undefined;
@@ -47,9 +47,9 @@ export declare const SearchContextSchema: z.ZodObject<{
 }, "strip", z.ZodTypeAny, {
     query: string;
     k: number;
-    filters?: {
+    filters: {
         tags?: string[] | undefined;
-    } | undefined;
+    };
 }, {
     query: string;
     k?: number | undefined;
