@@ -17,3 +17,4 @@ Thumbs.db
 *.swo
 *~
 .bolt/
+scripts/setup-mcp.js

@@ -6,11 +6,11 @@
   "type": "module",
   "bin": {
     "archivenet": "dist/index.js",
-    "setup-mcp": "setup-mcp.js"
+    "setup-mcp": "scripts/setup-mcp.js"
   },
   "files": [
     "dist/",
-    "setup-mcp.js",
+    "scripts/",
     ".env.example",
     "README.md",
     "LICENSE",
@@ -20,7 +20,7 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "tsx src/index.ts",
-    "setup": "node setup-mcp.js",
+    "setup": "node scripts/setup-mcp.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepublishOnly": "npm run build"
   },

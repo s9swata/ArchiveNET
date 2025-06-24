@@ -117,13 +117,13 @@ The unified setup script supports both Claude and Cursor:
 
 ```bash
 # Setup for Claude Desktop
-setup-mcp claude
+scripts/setup-mcp.js claude
 
 # Setup for Cursor IDE
-setup-mcp cursor
+scripts/setup-mcp.js cursor
 
 # Show help
-setup-mcp --help
+scripts/setup-mcp.js --help
 ```
 
 ### Using with npm/npx
@@ -293,4 +293,20 @@ setup-mcp cursor
 
 # Start the server manually if needed
 archivenet
+```
+
+## Project Structure
+
+```
+archivenet/
+├── src/                    # TypeScript source files
+├── dist/                   # Compiled JavaScript files
+├── scripts/                # Setup and utility scripts
+│   └── setup-mcp.js       # Unified setup script for Claude and Cursor
+├── .env.example           # Environment variables template
+├── package.json           # Package configuration
+├── tsconfig.json          # TypeScript configuration
+├── README.md              # This file
+├── LICENSE                # MIT License
+└── CHANGELOG.md           # Version history
 ```
