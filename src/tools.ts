@@ -67,7 +67,7 @@ export class ContextTools {
             type: 'number',
             minimum: 1,
             maximum: 100,
-            description: 'Number of results to return (default: 5)',
+            description: 'Number of results to return (required, typically 5-10)',
             default: 5,
           },
           filters: {
@@ -83,7 +83,7 @@ export class ContextTools {
             default: {},
           },
         },
-        required: ['query', 'filters'],
+        required: ['query', 'k', 'filters'],
       },
     };
   }
