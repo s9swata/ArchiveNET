@@ -8,6 +8,7 @@ A Model Context Protocol (MCP) server that provides context insertion and search
 - **Search Context**: Find previously stored context using queries with filtering
 - **Multi-LLM Support**: Works with Claude Desktop and Cursor IDE
 - **Configurable Endpoints**: Use your own API endpoints via environment variables
+- **Environment Editor**: Interactive tool to configure API endpoints
 - **Type Safety**: Full TypeScript implementation with Zod validation
 - **Error Handling**: Comprehensive error handling and validation
 - **Metadata Support**: Rich metadata including context, tags, timestamps, and client info
@@ -23,9 +24,8 @@ Use the unified setup script to automatically configure your preferred LLM:
 # 1. Install dependencies
 npm install
 
-# 2. Configure environment
-cp .env.example .env
-# Edit .env with your API endpoints
+# 2. Configure environment (interactive)
+npm run edit-env --interactive
 
 # 3. Run automated setup for your LLM
 npm run setup claude    # For Claude Desktop
@@ -40,18 +40,23 @@ npm run setup cursor    # For Cursor IDE
    ```
 
 2. **Configure Environment**
-   Copy `.env.example` to `.env` and configure your API endpoints:
+   
+   **Option A: Interactive Configuration (Recommended)**
    ```bash
-   cp .env.example .env
+   npm run edit-env --interactive
    ```
    
-   Edit `.env` with your actual endpoints:
-   ```env
-   INSERT_CONTEXT_ENDPOINT=https://your-api.com/insert
-   SEARCH_CONTEXT_ENDPOINT=https://your-api.com/search
-   # API_KEY is optional - uncomment if your API requires authentication
-   # API_KEY=your-api-key-here
-   API_TIMEOUT=30000
+   **Option B: Manual Configuration**
+   ```bash
+   cp .env.example .env
+   # Edit .env with your API endpoints
+   ```
+   
+   **Option C: Direct Updates**
+   ```bash
+   npm run edit-env INSERT_CONTEXT_ENDPOINT=https://your-api.com/insert
+   npm run edit-env SEARCH_CONTEXT_ENDPOINT=https://your-api.com/search
+   npm run edit-env API_KEY=your-secret-key
    ```
 
 3. **Build the Server**
@@ -109,6 +114,52 @@ npm run setup cursor    # For Cursor IDE
 
 5. **Restart Your LLM**
 
+## Environment Configuration
+
+### Using the Environment Editor
+
+The `edit-env` script provides multiple ways to configure your API endpoints:
+
+#### Interactive Mode (Recommended)
+```bash
+npm run edit-env --interactive
+```
+This will guide you through setting up all required and optional environment variables.
+
+#### Direct Updates
+```bash
+# Set individual variables
+npm run edit-env INSERT_CONTEXT_ENDPOINT=https://api.example.com/insert
+npm run edit-env SEARCH_CONTEXT_ENDPOINT=https://api.example.com/search
+npm run edit-env API_KEY=your-secret-key
+npm run edit-env API_TIMEOUT=60000
+
+# Set multiple variables at once
+npm run edit-env INSERT_CONTEXT_ENDPOINT=https://api.example.com/insert SEARCH_CONTEXT_ENDPOINT=https://api.example.com/search
+```
+
+#### Show Current Configuration
+```bash
+npm run edit-env --show
+```
+
+#### Reset to Defaults
+```bash
+npm run edit-env --reset
+```
+
+#### Help
+```bash
+npm run edit-env --help
+```
+
+### Environment Variables
+
+- **INSERT_CONTEXT_ENDPOINT** (required): API endpoint for inserting context
+- **SEARCH_CONTEXT_ENDPOINT** (required): API endpoint for searching context  
+- **API_KEY** (optional): API key for authentication
+- **API_TIMEOUT** (optional): Request timeout in milliseconds (default: 30000)
+
 ## Setup Script Usage
 
 The unified setup script supports both Claude and Cursor:
@@ -130,12 +181,16 @@ scripts/setup-mcp.js --help
 # Install globally
 npm install -g archivenet
 
+# Configure environment
+edit-env --interactive
+
 # Run setup
 setup-mcp claude
 
 # Or use without installing
 npx archivenet
 npx setup-mcp claude
+npx edit-env --interactive
 ```
 
 ## API Endpoint Requirements
@@ -230,6 +285,7 @@ The server is designed to work seamlessly with AI assistants that support the Mo
 - `npm run build`: Build TypeScript to JavaScript
 - `npm start`: Run the built server
 - `npm run setup <llm>`: Run the automated setup for specified LLM
+- `npm run edit-env`: Configure environment variables
 
 ## Supported LLMs
 
@@ -255,7 +311,7 @@ The API key is now optional. If your API endpoints don't require authentication,
 
 If the MCP server doesn't connect to your LLM:
 
-1. **Check file paths**: Ensure all paths in the config are absolute and correct
+1. **Check configuration**: Use `npm run edit-env --show` to verify your settings
 2. **Verify endpoints**: Test your API endpoints independently
 3. **Check logs**: Look at your LLM's logs for error messages
 4. **Restart completely**: Completely restart your LLM after configuration changes
@@ -284,6 +340,9 @@ The MCP server will automatically handle saving and retrieving this information 
 # Install globally
 npm install -g archivenet
 
+# Configure environment interactively
+edit-env --interactive
+
 # Setup for your preferred LLM
 setup-mcp claude
 # or
@@ -300,7 +359,8 @@ archivenet/
 ├── src/                    # TypeScript source files
 ├── dist/                   # Compiled JavaScript files
 ├── scripts/                # Setup and utility scripts
-│   └── setup-mcp.js       # Unified setup script for Claude and Cursor
+│   ├── setup-mcp.js       # Unified setup script for Claude and Cursor
+│   └── edit-env.js        # Environment configuration editor
 ├── .env.example           # Environment variables template
 ├── package.json           # Package configuration
 ├── tsconfig.json          # TypeScript configuration
