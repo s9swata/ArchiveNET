@@ -91,7 +91,7 @@ export class ContextAPIClient {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), config.apiTimeout);
 
-      // Format the request to match your API structure
+      /* Format the request to match your API structure
       const requestBody = {
         query: request.query,
         k: request.k,
@@ -100,11 +100,16 @@ export class ContextAPIClient {
           ...request.filters,
         },
       };
+      */
 
       const response = await fetch(config.searchEndpoint, {
         method: 'POST',
         headers: this.headers,
-        body: JSON.stringify(requestBody),
+        body: JSON.stringify({
+          query: request.query,
+          k: request.k || 5, // Default to 5 if not provided
+          filters: {},
+        }),
         signal: controller.signal,
       });
 
@@ -117,6 +122,7 @@ export class ContextAPIClient {
       const result = await response.json();
       
       // Handle your backend's response format
+
       return this.normalizeSearchResponse(result);
     } catch (error) {
       if (error instanceof Error) {

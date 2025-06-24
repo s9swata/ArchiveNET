@@ -83,7 +83,7 @@ export class ContextTools {
             default: {},
           },
         },
-        required: ['query', 'k', 'filters'],
+        required: ['query', 'filters'],
       },
     };
   }
