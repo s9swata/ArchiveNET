@@ -8,7 +8,7 @@ dotenv.config();
 const ConfigSchema = z.object({
   insertEndpoint: z.string().url('INSERT_CONTEXT_ENDPOINT must be a valid URL'),
   searchEndpoint: z.string().url('SEARCH_CONTEXT_ENDPOINT must be a valid URL'),
-  apiKey: z.string().min(1, 'API_KEY is required'),
+  apiKey: z.string().optional(),
   apiTimeout: z.number().default(30000),
 });
 

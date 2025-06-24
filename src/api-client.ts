@@ -12,9 +12,13 @@ export class ContextAPIClient {
   constructor() {
     this.headers = {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${config.apiKey}`,
       'User-Agent': 'MCP-Context-Server/1.0.0',
     };
+
+    // Only add Authorization header if API key is provided
+    if (config.apiKey) {
+      this.headers['Authorization'] = `Bearer ${config.apiKey}`;
+    }
   }
 
   async insertContext(request: InsertContextRequest): Promise<InsertContextResponse> {

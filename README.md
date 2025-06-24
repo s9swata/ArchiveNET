@@ -10,6 +10,7 @@ A Model Context Protocol (MCP) server that provides context insertion and search
 - **Type Safety**: Full TypeScript implementation with Zod validation
 - **Error Handling**: Comprehensive error handling and validation
 - **Metadata Support**: Rich metadata including context, tags, timestamps, and client info
+- **Optional Authentication**: API key authentication is optional
 
 ## Setup
 
@@ -28,7 +29,8 @@ A Model Context Protocol (MCP) server that provides context insertion and search
    ```env
    INSERT_CONTEXT_ENDPOINT=https://your-api.com/insert
    SEARCH_CONTEXT_ENDPOINT=https://your-api.com/search
-   API_KEY=your-api-key-here
+   # API_KEY is optional - uncomment if your API requires authentication
+   # API_KEY=your-api-key-here
    API_TIMEOUT=30000
    ```
 
@@ -152,3 +154,7 @@ The server includes comprehensive error handling for:
 - Invalid parameters
 
 All errors are properly formatted and returned to the AI assistant for appropriate handling.
+
+## Authentication
+
+The API key is now optional. If your API endpoints don't require authentication, simply leave the `API_KEY` environment variable unset or commented out in your `.env` file. The server will work without authentication headers.
