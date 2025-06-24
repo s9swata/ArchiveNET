@@ -130,7 +130,25 @@ export class ContextAPIClient {
   }
 
   private normalizeSearchResponse(result: any): SearchContextResponse {
-    // Handle direct array response (your format)
+    // Handle your specific backend format first
+    if (result && typeof result === 'object' && 'success' in result && 'data' in result && Array.isArray(result.data)) {
+      const normalizedResults: ContextItem[] = result.data.map((item: MemoryResult) => ({
+        id: item.id?.toString(),
+        content: item.content || '',
+        metadata: item.metadata,
+        relevanceScore: item.distance ? (1 - item.distance) : undefined, // Convert distance to relevance score
+        distance: item.distance
+      }));
+
+      return {
+        success: result.success,
+        results: normalizedResults,
+        total: result.data.length,
+        message: result.message || 'Search completed successfully'
+      };
+    }
+
+    // Handle direct array response (fallback)
     if (Array.isArray(result)) {
       const normalizedResults: ContextItem[] = result.map((item: MemoryResult) => ({
         id: item.id?.toString(),
@@ -148,29 +166,11 @@ export class ContextAPIClient {
       };
     }
 
-    // Handle object response with results array
+    // Handle object response with results array (other formats)
     if (result && typeof result === 'object') {
       // If it's already in the expected format
       if ('success' in result && 'results' in result) {
         return result as SearchContextResponse;
-      }
-
-      // If it has a data field with results
-      if ('data' in result && Array.isArray(result.data)) {
-        const normalizedResults: ContextItem[] = result.data.map((item: MemoryResult) => ({
-          id: item.id?.toString(),
-          content: item.content || '',
-          metadata: item.metadata,
-          relevanceScore: item.distance ? (1 - item.distance) : undefined,
-          distance: item.distance
-        }));
-
-        return {
-          success: true,
-          results: normalizedResults,
-          total: result.data.length,
-          message: result.message || 'Search completed successfully'
-        };
       }
 
       // If it has results directly
