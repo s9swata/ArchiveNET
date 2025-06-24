@@ -1,4 +1,4 @@
-# MCP Context Server
+# ArchiveNet
 
 A Model Context Protocol (MCP) server that provides context insertion and search functionality. This server allows AI assistants to save and retrieve personal and professional data through configurable API endpoints.
 
@@ -6,6 +6,7 @@ A Model Context Protocol (MCP) server that provides context insertion and search
 
 - **Insert Context**: Save personal, professional, or general information with metadata
 - **Search Context**: Find previously stored context using queries with filtering
+- **Multi-LLM Support**: Works with Claude Desktop and Cursor IDE
 - **Configurable Endpoints**: Use your own API endpoints via environment variables
 - **Type Safety**: Full TypeScript implementation with Zod validation
 - **Error Handling**: Comprehensive error handling and validation
@@ -16,7 +17,7 @@ A Model Context Protocol (MCP) server that provides context insertion and search
 
 ### Automated Setup (Recommended)
 
-Use the setup script to automatically configure Claude Desktop:
+Use the unified setup script to automatically configure your preferred LLM:
 
 ```bash
 # 1. Install dependencies
@@ -26,8 +27,9 @@ npm install
 cp .env.example .env
 # Edit .env with your API endpoints
 
-# 3. Run automated setup
-npm run setup-claude
+# 3. Run automated setup for your LLM
+npm run setup claude    # For Claude Desktop
+npm run setup cursor    # For Cursor IDE
 ```
 
 ### Manual Setup
@@ -57,7 +59,9 @@ npm run setup-claude
    npm run build
    ```
 
-4. **Configure Claude Desktop**
+4. **Configure Your LLM**
+
+   #### For Claude Desktop
    
    Add to your Claude Desktop config file:
    
@@ -68,7 +72,7 @@ npm run setup-claude
    ```json
    {
      "mcpServers": {
-       "context-server": {
+       "archivenet": {
          "command": "node",
          "args": ["/absolute/path/to/your/project/dist/index.js"],
          "env": {
@@ -81,32 +85,59 @@ npm run setup-claude
    }
    ```
 
-5. **Restart Claude Desktop**
+   #### For Cursor IDE
+   
+   Add to your Cursor MCP config file:
+   
+   **macOS**: `~/Library/Application Support/Cursor/User/globalStorage/mcp.json`
+   **Windows**: `%APPDATA%\Cursor\User\globalStorage\mcp.json`
+   **Linux**: `~/.config/Cursor/User/globalStorage/mcp.json`
+   
+   ```json
+   {
+     "mcpServers": {
+       "archivenet": {
+         "command": "node",
+         "args": ["/absolute/path/to/your/project/dist/index.js"],
+         "env": {
+           "INSERT_CONTEXT_ENDPOINT": "https://your-api.com/insert",
+           "SEARCH_CONTEXT_ENDPOINT": "https://your-api.com/search",
+           "API_TIMEOUT": "30000"
+         }
+       }
+     }
+   }
+   ```
 
-## Setup Scripts
+5. **Restart Your LLM**
 
-The project includes platform-specific setup scripts:
+## Setup Script Usage
 
-- **Cross-platform (Node.js)**: `setup-claude-mcp.js`
-- **Unix/Linux/macOS**: `setup-claude-mcp.sh`
-- **Windows**: `setup-claude-mcp.bat`
+The unified setup script supports both Claude and Cursor:
 
-### Using Setup Scripts
-
-**Node.js script (recommended)**:
 ```bash
-npm run setup-claude
+# Setup for Claude Desktop
+setup-mcp claude
+
+# Setup for Cursor IDE
+setup-mcp cursor
+
+# Show help
+setup-mcp --help
 ```
 
-**Unix/Linux/macOS**:
-```bash
-chmod +x setup-claude-mcp.sh
-./setup-claude-mcp.sh
-```
+### Using with npm/npx
 
-**Windows**:
-```cmd
-setup-claude-mcp.bat
+```bash
+# Install globally
+npm install -g archivenet
+
+# Run setup
+setup-mcp claude
+
+# Or use without installing
+npx archivenet
+npx setup-mcp claude
 ```
 
 ## API Endpoint Requirements
@@ -142,9 +173,7 @@ Your API endpoints should implement the following interfaces:
 {
   "query": "favorite color preference",
   "k": 5,
-  "filters": {
-    "tags": ["preference"]
-  }
+  "filters": {}
 }
 ```
 
@@ -152,9 +181,10 @@ Your API endpoints should implement the following interfaces:
 ```json
 {
   "success": true,
-  "results": [
+  "message": "Found 1 relevant memories",
+  "data": [
     {
-      "id": "unique-id",
+      "id": 0,
       "content": "User's favorite color is blue",
       "metadata": {
         "context": "preference setting",
@@ -162,11 +192,9 @@ Your API endpoints should implement the following interfaces:
         "timestamp": "2025-06-06T14:30:00Z",
         "client": "cursor"
       },
-      "relevanceScore": 0.95
+      "distance": 0.3285933909986025
     }
-  ],
-  "total": 1,
-  "message": "Search completed successfully"
+  ]
 }
 ```
 
@@ -189,8 +217,8 @@ Searches through previously stored context data.
 **Parameters:**
 - `query` (required): Search query
 - `k`: Number of results to return (default: 5)
-- `filters` (optional): Object containing:
-  - `tags`: Array of tags to filter by
+- `filters` (required): Object containing:
+  - `tags`: Array of tags to filter by (optional)
 
 ## Usage with AI Assistants
 
@@ -203,7 +231,12 @@ The server is designed to work seamlessly with AI assistants that support the Mo
 - `npm run dev`: Run in development mode with hot reload
 - `npm run build`: Build TypeScript to JavaScript
 - `npm start`: Run the built server
-- `npm run setup-claude`: Run the automated Claude Desktop setup
+- `npm run setup <llm>`: Run the automated setup for specified LLM
+
+## Supported LLMs
+
+- **Claude Desktop**: Full support with automated configuration
+- **Cursor IDE**: Full support with automated configuration
 
 ## Error Handling
 
@@ -222,14 +255,14 @@ The API key is now optional. If your API endpoints don't require authentication,
 
 ## Troubleshooting
 
-If the MCP server doesn't connect to Claude:
+If the MCP server doesn't connect to your LLM:
 
-1. **Check file paths**: Ensure all paths in the Claude config are absolute and correct
+1. **Check file paths**: Ensure all paths in the config are absolute and correct
 2. **Verify endpoints**: Test your API endpoints independently
-3. **Check logs**: Look at Claude Desktop's logs for error messages
-4. **Restart Claude**: Completely restart Claude Desktop after configuration changes
+3. **Check logs**: Look at your LLM's logs for error messages
+4. **Restart completely**: Completely restart your LLM after configuration changes
 5. **Test server**: Run `node dist/index.js` to check for server errors
-6. **Permissions**: Ensure Claude Desktop has permission to execute Node.js scripts
+6. **Permissions**: Ensure your LLM has permission to execute Node.js scripts
 
 ## Example Usage
 
@@ -246,3 +279,18 @@ After setup, you can test the integration:
 ```
 
 The MCP server will automatically handle saving and retrieving this information through your configured API endpoints.
+
+## Installation from npm
+
+```bash
+# Install globally
+npm install -g archivenet
+
+# Setup for your preferred LLM
+setup-mcp claude
+# or
+setup-mcp cursor
+
+# Start the server manually if needed
+archivenet
+```
