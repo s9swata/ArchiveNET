@@ -82,7 +82,7 @@ Direct Updates:
   
   edit-env INSERT_CONTEXT_ENDPOINT=https://api.example.com/insert
   edit-env SEARCH_CONTEXT_ENDPOINT=https://api.example.com/search
-  edit-env API_KEY=your-secret-key
+  edit-env TOKEN=your-bearer-token
   edit-env API_TIMEOUT=30000
 
 Examples:
@@ -90,12 +90,12 @@ Examples:
   edit-env --show                          # Show current config
   edit-env --reset                         # Reset to defaults
   edit-env INSERT_CONTEXT_ENDPOINT=https://my-api.com/insert
-  edit-env API_KEY=abc123 API_TIMEOUT=60000
+  edit-env TOKEN=abc123 API_TIMEOUT=60000
 
 Environment Variables:
   INSERT_CONTEXT_ENDPOINT    API endpoint for inserting context (required)
   SEARCH_CONTEXT_ENDPOINT    API endpoint for searching context (required)
-  API_KEY                    API key for authentication (optional)
+  TOKEN                      Bearer token for authentication (optional)
   API_TIMEOUT                Request timeout in milliseconds (default: 30000)
 `);
   }
@@ -113,8 +113,8 @@ Environment Variables:
         const basicEnv = `# ArchiveNet API Configuration
 INSERT_CONTEXT_ENDPOINT=https://your-api.com/insert
 SEARCH_CONTEXT_ENDPOINT=https://your-api.com/search
-# Optional: API key for authentication
-# API_KEY=your-api-key-here
+# Optional: Bearer token for authentication
+# TOKEN=your-bearer-token-here
 # Optional: Request timeout in milliseconds
 API_TIMEOUT=30000
 `;
@@ -167,18 +167,18 @@ API_TIMEOUT=30000
     const orderedKeys = [
       'INSERT_CONTEXT_ENDPOINT',
       'SEARCH_CONTEXT_ENDPOINT',
-      'API_KEY',
+      'TOKEN',
       'API_TIMEOUT'
     ];
 
     // Add variables in order
     orderedKeys.forEach(key => {
-      if (key === 'API_KEY') {
-        lines.push('# Optional: API key for authentication');
+      if (key === 'TOKEN') {
+        lines.push('# Optional: Bearer token for authentication');
         if (envVars[key]) {
           lines.push(`${key}=${envVars[key]}`);
         } else {
-          lines.push(`# ${key}=your-api-key-here`);
+          lines.push(`# ${key}=your-bearer-token-here`);
         }
       } else if (key === 'API_TIMEOUT') {
         lines.push('# Optional: Request timeout in milliseconds');
@@ -261,10 +261,10 @@ API_TIMEOUT=30000
       }
     } while (!searchEndpoint);
 
-    // API Key (optional)
-    const apiKey = await this.prompt(
-      'API Key (optional, leave empty if not needed)',
-      envVars.API_KEY
+    // Bearer Token (optional)
+    const token = await this.prompt(
+      'Bearer Token (optional, leave empty if not needed)',
+      envVars.TOKEN
     );
 
     // API Timeout
@@ -288,8 +288,8 @@ API_TIMEOUT=30000
       API_TIMEOUT: apiTimeout.toString()
     };
 
-    if (apiKey) {
-      newEnvVars.API_KEY = apiKey;
+    if (token) {
+      newEnvVars.TOKEN = token;
     }
 
     this.writeEnvFile(newEnvVars);
@@ -316,7 +316,7 @@ API_TIMEOUT=30000
     
     // Optional variables
     console.log('\nOptional Settings:');
-    console.log(`  API_KEY: ${envVars.API_KEY ? '✅ Set (hidden)' : '⚪ Not set'}`);
+    console.log(`  TOKEN: ${envVars.TOKEN ? '✅ Set (hidden)' : '⚪ Not set'}`);
     console.log(`  API_TIMEOUT: ${envVars.API_TIMEOUT || '30000'} ms`);
 
     // Validation
@@ -369,7 +369,7 @@ API_TIMEOUT=30000
     const { envVars, comments } = this.readEnvFile();
     
     // Validate updates
-    const validKeys = ['INSERT_CONTEXT_ENDPOINT', 'SEARCH_CONTEXT_ENDPOINT', 'API_KEY', 'API_TIMEOUT'];
+    const validKeys = ['INSERT_CONTEXT_ENDPOINT', 'SEARCH_CONTEXT_ENDPOINT', 'TOKEN', 'API_TIMEOUT'];
     const invalidKeys = Object.keys(updates).filter(key => !validKeys.includes(key));
     
     if (invalidKeys.length > 0) {
@@ -400,7 +400,7 @@ API_TIMEOUT=30000
     
     console.log('✅ Environment variables updated:');
     Object.keys(updates).forEach(key => {
-      const value = key === 'API_KEY' ? '***hidden***' : updates[key];
+      const value = key === 'TOKEN' ? '***hidden***' : updates[key];
       console.log(`   ${key} = ${value}`);
     });
   }

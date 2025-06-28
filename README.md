@@ -12,7 +12,7 @@ A Model Context Protocol (MCP) server that provides context insertion and search
 - **Type Safety**: Full TypeScript implementation with Zod validation
 - **Error Handling**: Comprehensive error handling and validation
 - **Metadata Support**: Rich metadata including context, tags, timestamps, and client info
-- **Optional Authentication**: API key authentication is optional
+- **Bearer Token Authentication**: Optional Bearer token authentication
 
 ## Quick Setup
 
@@ -56,7 +56,7 @@ npm run setup cursor    # For Cursor IDE
    ```bash
    npm run edit-env INSERT_CONTEXT_ENDPOINT=https://your-api.com/insert
    npm run edit-env SEARCH_CONTEXT_ENDPOINT=https://your-api.com/search
-   npm run edit-env API_KEY=your-secret-key
+   npm run edit-env TOKEN=your-bearer-token
    ```
 
 3. **Build the Server**
@@ -83,6 +83,7 @@ npm run setup cursor    # For Cursor IDE
          "env": {
            "INSERT_CONTEXT_ENDPOINT": "https://your-api.com/insert",
            "SEARCH_CONTEXT_ENDPOINT": "https://your-api.com/search",
+           "TOKEN": "your-bearer-token",
            "API_TIMEOUT": "30000"
          }
        }
@@ -105,6 +106,7 @@ npm run setup cursor    # For Cursor IDE
          "env": {
            "INSERT_CONTEXT_ENDPOINT": "https://your-api.com/insert",
            "SEARCH_CONTEXT_ENDPOINT": "https://your-api.com/search",
+           "TOKEN": "your-bearer-token",
            "API_TIMEOUT": "30000"
          }
        }
@@ -131,7 +133,7 @@ This will guide you through setting up all required and optional environment var
 # Set individual variables
 npm run edit-env INSERT_CONTEXT_ENDPOINT=https://api.example.com/insert
 npm run edit-env SEARCH_CONTEXT_ENDPOINT=https://api.example.com/search
-npm run edit-env API_KEY=your-secret-key
+npm run edit-env TOKEN=your-bearer-token
 npm run edit-env API_TIMEOUT=60000
 
 # Set multiple variables at once
@@ -157,7 +159,7 @@ npm run edit-env --help
 
 - **INSERT_CONTEXT_ENDPOINT** (required): API endpoint for inserting context
 - **SEARCH_CONTEXT_ENDPOINT** (required): API endpoint for searching context  
-- **API_KEY** (optional): API key for authentication
+- **TOKEN** (optional): Bearer token for authentication
 - **API_TIMEOUT** (optional): Request timeout in milliseconds (default: 30000)
 
 ## Setup Script Usage
@@ -198,6 +200,12 @@ npx edit-env --interactive
 Your API endpoints should implement the following interfaces:
 
 ### Insert Endpoint (POST)
+**Request Headers:**
+```
+Content-Type: application/json
+Authorization: Bearer your-token-here
+```
+
 **Request Body:**
 ```json
 {
@@ -221,6 +229,12 @@ Your API endpoints should implement the following interfaces:
 ```
 
 ### Search Endpoint (POST)
+**Request Headers:**
+```
+Content-Type: application/json
+Authorization: Bearer your-token-here
+```
+
 **Request Body:**
 ```json
 {
@@ -305,7 +319,7 @@ All errors are properly formatted and returned to the AI assistant for appropria
 
 ## Authentication
 
-The API key is now optional. If your API endpoints don't require authentication, simply leave the `API_KEY` environment variable unset or commented out in your `.env` file. The server will work without authentication headers.
+Bearer token authentication is optional. If your API endpoints don't require authentication, simply leave the `TOKEN` environment variable unset or commented out in your `.env` file. The server will work without authentication headers.
 
 ## Troubleshooting
 

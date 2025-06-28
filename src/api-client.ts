@@ -17,9 +17,9 @@ export class ContextAPIClient {
       'User-Agent': 'MCP-Context-Server/1.0.0',
     };
 
-    // Only add Authorization header if API key is provided
-    if (config.apiKey) {
-      this.headers['Authorization'] = `Bearer ${config.apiKey}`;
+    // Only add Authorization header if token is provided
+    if (config.token) {
+      this.headers['Authorization'] = `Bearer ${config.token}`;
     }
   }
 

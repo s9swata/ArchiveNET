@@ -164,8 +164,8 @@ Note: If .env file doesn't exist, you'll be prompted to create one.
       const basicEnv = `# ArchiveNet API Configuration
 INSERT_CONTEXT_ENDPOINT=https://your-api.com/insert
 SEARCH_CONTEXT_ENDPOINT=https://your-api.com/search
-# Optional: API key for authentication
-# API_KEY=your-api-key-here
+# Optional: Bearer token for authentication
+# TOKEN=your-bearer-token-here
 # Optional: Request timeout in milliseconds
 API_TIMEOUT=30000
 `;
@@ -278,8 +278,8 @@ API_TIMEOUT=30000
     };
 
     // Add optional environment variables if they exist
-    if (envVars.API_KEY) {
-      mcpEnv.API_KEY = envVars.API_KEY;
+    if (envVars.TOKEN) {
+      mcpEnv.TOKEN = envVars.TOKEN;
     }
     if (envVars.API_TIMEOUT) {
       mcpEnv.API_TIMEOUT = envVars.API_TIMEOUT;
@@ -312,8 +312,8 @@ API_TIMEOUT=30000
     };
 
     // Add optional environment variables if they exist
-    if (envVars.API_KEY) {
-      mcpEnv.API_KEY = envVars.API_KEY;
+    if (envVars.TOKEN) {
+      mcpEnv.TOKEN = envVars.TOKEN;
     }
     if (envVars.API_TIMEOUT) {
       mcpEnv.API_TIMEOUT = envVars.API_TIMEOUT;
