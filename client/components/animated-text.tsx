@@ -22,7 +22,11 @@ export function AnimatedText({
     hidden: { opacity: 0 },
     visible: (i = 1) => ({
       opacity: 1,
-      transition: { staggerChildren: 0.12, delayChildren: delay * i },
+      transition: { 
+        staggerChildren: 0.12, 
+        delayChildren: delay * i,
+        ease: [0.25, 0.46, 0.45, 0.94]
+      },
     }),
   }
 
@@ -34,6 +38,7 @@ export function AnimatedText({
         type: "spring",
         damping: 12,
         stiffness: 100,
+        mass: 0.8,
       },
     },
     hidden: {
@@ -43,13 +48,14 @@ export function AnimatedText({
         type: "spring",
         damping: 12,
         stiffness: 100,
+        mass: 0.8,
       },
     },
   }
 
   return (
     <motion.div
-      className={cn(className)}
+      className={cn("text-rendering-optimized", className)}
       variants={container}
       initial="hidden"
       animate="visible"

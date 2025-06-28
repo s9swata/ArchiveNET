@@ -1,18 +1,19 @@
 "use client"
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 
 interface Particle {
   id: number
   x: number
   delay: number
   duration: number
+  size: number
 }
 
 export function Particles() {
   const [particles, setParticles] = useState<Particle[]>([])
 
-  useEffect(() => {
+  const particleData = useMemo(() => {
     const particleCount = 50
     const newParticles: Particle[] = []
 
@@ -22,14 +23,19 @@ export function Particles() {
         x: Math.random() * 100,
         delay: Math.random() * 20,
         duration: 15 + Math.random() * 10,
+        size: 1 + Math.random() * 2,
       })
     }
 
-    setParticles(newParticles)
+    return newParticles
   }, [])
 
+  useEffect(() => {
+    setParticles(particleData)
+  }, [particleData])
+
   return (
-    <div className="particles">
+    <div className="particles" aria-hidden="true">
       {particles.map((particle) => (
         <div
           key={particle.id}
@@ -38,6 +44,9 @@ export function Particles() {
             left: `${particle.x}%`,
             animationDelay: `${particle.delay}s`,
             animationDuration: `${particle.duration}s`,
+            width: `${particle.size}px`,
+            height: `${particle.size}px`,
+            willChange: 'transform, opacity',
           }}
         />
       ))}

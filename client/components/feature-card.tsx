@@ -23,16 +23,28 @@ export function FeatureCard({
   return (
     <motion.div
       initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay }}
-      whileHover={{ scale: 1.02 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ 
+        duration: 0.6, 
+        delay,
+        ease: [0.25, 0.46, 0.45, 0.94]
+      }}
+      whileHover={{ 
+        scale: 1.02,
+        transition: { duration: 0.2 }
+      }}
     >
-      <GlassCard className="p-6 h-full">
+      <GlassCard className="p-6 h-full group">
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 rounded-lg glass-strong">
+            <motion.div 
+              className="p-3 rounded-lg glass-strong group-hover:bg-white/15 transition-colors duration-300"
+              whileHover={{ scale: 1.1 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            >
               <Icon className="w-6 h-6 text-violet-400" />
-            </div>
+            </motion.div>
             {badge && (
               <Badge variant="glass" className="text-xs">
                 {badge}
@@ -40,11 +52,11 @@ export function FeatureCard({
             )}
           </div>
           
-          <h3 className="text-xl font-semibold mb-3 text-white">
+          <h3 className="text-xl font-semibold mb-3 text-white group-hover:text-violet-100 transition-colors duration-300">
             {title}
           </h3>
           
-          <p className="text-gray-300 leading-relaxed flex-grow">
+          <p className="text-gray-300 leading-relaxed flex-grow group-hover:text-gray-200 transition-colors duration-300">
             {description}
           </p>
         </div>

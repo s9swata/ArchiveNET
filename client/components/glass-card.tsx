@@ -25,13 +25,16 @@ export function GlassCard({
   return (
     <motion.div
       className={cn(
-        'rounded-xl transition-all duration-300',
+        'rounded-xl transition-all duration-300 will-change-transform',
         variants[variant],
         hover && 'hover:bg-white/10 hover:border-white/30 hover:shadow-2xl hover:shadow-violet-500/20',
         className
       )}
-      whileHover={hover ? { y: -5 } : undefined}
-      transition={{ duration: 0.3 }}
+      whileHover={hover ? { 
+        y: -5,
+        transition: { duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }
+      } : undefined}
+      layout
     >
       {children}
     </motion.div>
