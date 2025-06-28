@@ -1,44 +1,23 @@
 "use client";
 import { motion } from "framer-motion";
-import { IconBrandGithub, IconBrandTwitter, IconBrandLinkedin, IconMail, IconMapPin, IconPhone } from "@tabler/icons-react";
+import { IconBrandGithub, IconBrandTwitter, IconBrandLinkedin, IconMail } from "@tabler/icons-react";
 import Image from "next/image";
 import logo from "../../../public/icons/cropped_logo.jpeg";
 
 export const Footer = () => {
     const currentYear = new Date().getFullYear();
 
-    const footerLinks = {
-        product: [
-            { name: "Features", href: "#features" },
-            { name: "Pricing", href: "#pricing" },
-            { name: "Documentation", href: "#docs" },
-            { name: "API Reference", href: "#api" },
-        ],
-        company: [
-            { name: "About Us", href: "#about" },
-            { name: "Blog", href: "#blog" },
-            { name: "Careers", href: "#careers" },
-            { name: "Contact", href: "#contact" },
-        ],
-        resources: [
-            { name: "Community", href: "#community" },
-            { name: "Support", href: "#support" },
-            { name: "Status", href: "#status" },
-            { name: "Changelog", href: "#changelog" },
-        ],
-        legal: [
-            { name: "Privacy Policy", href: "#privacy" },
-            { name: "Terms of Service", href: "#terms" },
-            { name: "Cookie Policy", href: "#cookies" },
-            { name: "GDPR", href: "#gdpr" },
-        ],
-    };
+    const footerLinks = [
+        { name: "Features", href: "#features" },
+        { name: "Pricing", href: "#pricing" },
+        { name: "Documentation", href: "#documentation" },
+    ];
 
     const socialLinks = [
         { icon: IconBrandGithub, href: "#github", label: "GitHub" },
         { icon: IconBrandTwitter, href: "#twitter", label: "Twitter" },
         { icon: IconBrandLinkedin, href: "#linkedin", label: "LinkedIn" },
-        { icon: IconMail, href: "mailto:contact@archivenet.com", label: "Email" },
+        { icon: IconMail, href: "mailto:admin@archivenet.tech", label: "Email" },
     ];
 
     return (
@@ -52,7 +31,7 @@ export const Footer = () => {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     {/* Main Footer Content */}
                     <div className="py-12 lg:py-16">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 lg:gap-12">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
                             {/* Brand Section */}
                             <div className="col-span-1 md:col-span-2 lg:col-span-2">
                                 <motion.div
@@ -86,24 +65,15 @@ export const Footer = () => {
                                     {/* Contact Info */}
                                     <div className="space-y-3">
                                         <div className="flex items-center space-x-3 text-gray-400 text-sm">
-                                            <IconMapPin className="w-4 h-4 text-violet-400" />
-                                            <span>San Francisco, CA</span>
-                                        </div>
-                                        <div className="flex items-center space-x-3 text-gray-400 text-sm">
-                                            <IconPhone className="w-4 h-4 text-violet-400" />
-                                            <span>+1 (555) 123-4567</span>
-                                        </div>
-                                        <div className="flex items-center space-x-3 text-gray-400 text-sm">
                                             <IconMail className="w-4 h-4 text-violet-400" />
-                                            <span>contact@archivenet.com</span>
+                                            <span>admin@archivenet.tech</span>
                                         </div>
                                     </div>
                                 </motion.div>
                             </div>
 
-                            {/* Links Sections */}
-                            <div className="col-span-1 md:col-span-2 lg:col-span-4 grid grid-cols-2 md:grid-cols-4 gap-8">
-                                {/* Product */}
+                            {/* Quick Links */}
+                            <div className="col-span-1 lg:col-span-1">
                                 <motion.div
                                     initial={{ opacity: 0, y: 20 }}
                                     whileInView={{ opacity: 1, y: 0 }}
@@ -112,10 +82,10 @@ export const Footer = () => {
                                     className="space-y-4"
                                 >
                                     <h3 className="text-white font-[semiBold] text-sm uppercase tracking-wider">
-                                        Product
+                                        Quick Links
                                     </h3>
                                     <ul className="space-y-3">
-                                        {footerLinks.product.map((link, index) => (
+                                        {footerLinks.map((link, index) => (
                                             <li key={index}>
                                                 <a
                                                     href={link.href}
@@ -127,8 +97,10 @@ export const Footer = () => {
                                         ))}
                                     </ul>
                                 </motion.div>
+                            </div>
 
-                                {/* Company */}
+                            {/* Newsletter Section */}
+                            <div className="col-span-1 lg:col-span-1">
                                 <motion.div
                                     initial={{ opacity: 0, y: 20 }}
                                     whileInView={{ opacity: 1, y: 0 }}
@@ -137,111 +109,32 @@ export const Footer = () => {
                                     className="space-y-4"
                                 >
                                     <h3 className="text-white font-[semiBold] text-sm uppercase tracking-wider">
-                                        Company
+                                        Stay Updated
                                     </h3>
-                                    <ul className="space-y-3">
-                                        {footerLinks.company.map((link, index) => (
-                                            <li key={index}>
-                                                <a
-                                                    href={link.href}
-                                                    className="text-gray-400 hover:text-white transition-colors duration-200 text-sm font-[Regular]"
-                                                >
-                                                    {link.name}
-                                                </a>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </motion.div>
-
-                                {/* Resources */}
-                                <motion.div
-                                    initial={{ opacity: 0, y: 20 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.6, delay: 0.3 }}
-                                    viewport={{ once: true }}
-                                    className="space-y-4"
-                                >
-                                    <h3 className="text-white font-[semiBold] text-sm uppercase tracking-wider">
-                                        Resources
-                                    </h3>
-                                    <ul className="space-y-3">
-                                        {footerLinks.resources.map((link, index) => (
-                                            <li key={index}>
-                                                <a
-                                                    href={link.href}
-                                                    className="text-gray-400 hover:text-white transition-colors duration-200 text-sm font-[Regular]"
-                                                >
-                                                    {link.name}
-                                                </a>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </motion.div>
-
-                                {/* Legal */}
-                                <motion.div
-                                    initial={{ opacity: 0, y: 20 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.6, delay: 0.4 }}
-                                    viewport={{ once: true }}
-                                    className="space-y-4"
-                                >
-                                    <h3 className="text-white font-[semiBold] text-sm uppercase tracking-wider">
-                                        Legal
-                                    </h3>
-                                    <ul className="space-y-3">
-                                        {footerLinks.legal.map((link, index) => (
-                                            <li key={index}>
-                                                <a
-                                                    href={link.href}
-                                                    className="text-gray-400 hover:text-white transition-colors duration-200 text-sm font-[Regular]"
-                                                >
-                                                    {link.name}
-                                                </a>
-                                            </li>
-                                        ))}
-                                    </ul>
+                                    <p className="text-gray-400 text-sm font-[Regular] mb-4">
+                                        Get the latest updates on ArchiveNET development.
+                                    </p>
+                                    
+                                    <div className="space-y-3">
+                                        <input
+                                            type="email"
+                                            placeholder="Enter your email"
+                                            className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white focus:border-white backdrop-blur-sm font-[Regular] text-sm transition-all duration-200"
+                                        />
+                                        <button className="w-full px-6 py-3 bg-white hover:bg-gray-100 text-black rounded-lg transition-all duration-200 font-[semiBold] text-sm">
+                                            Subscribe
+                                        </button>
+                                    </div>
                                 </motion.div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Newsletter Section */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.5 }}
-                        viewport={{ once: true }}
-                        className="py-8 border-t border-white/10"
-                    >
-                        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-6 lg:space-y-0">
-                            <div className="max-w-md">
-                                <h3 className="text-white font-[semiBold] text-lg mb-2">
-                                    Stay Updated
-                                </h3>
-                                <p className="text-gray-400 text-sm font-[Regular]">
-                                    Get the latest updates on ArchiveNET development and releases.
-                                </p>
-                            </div>
-                            
-                            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 max-w-md w-full lg:w-auto">
-                                <input
-                                    type="email"
-                                    placeholder="Enter your email"
-                                    className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent backdrop-blur-sm font-[Regular] text-sm"
-                                />
-                                <button className="px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white rounded-lg transition-all duration-200 font-[semiBold] text-sm whitespace-nowrap">
-                                    Subscribe
-                                </button>
-                            </div>
-                        </div>
-                    </motion.div>
-
                     {/* Bottom Section */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.6 }}
+                        transition={{ duration: 0.6, delay: 0.3 }}
                         viewport={{ once: true }}
                         className="py-8 border-t border-white/10"
                     >
