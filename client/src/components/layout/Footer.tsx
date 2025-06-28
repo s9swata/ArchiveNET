@@ -20,6 +20,23 @@ export const Footer = () => {
         { icon: IconMail, href: "mailto:admin@archivenet.tech", label: "Email" },
     ];
 
+    // Smooth scroll function for footer links
+    const handleFooterLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+        e.preventDefault();
+        
+        if (href.startsWith('#')) {
+            const targetId = href.substring(1);
+            const targetElement = document.getElementById(targetId);
+            
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start',
+                });
+            }
+        }
+    };
+
     return (
         <footer className="relative bg-black border-t border-white/10 overflow-hidden">
             {/* Background Effects */}
@@ -89,7 +106,8 @@ export const Footer = () => {
                                             <li key={index}>
                                                 <a
                                                     href={link.href}
-                                                    className="text-gray-400 hover:text-white transition-colors duration-200 text-sm font-[Regular]"
+                                                    onClick={(e) => handleFooterLinkClick(e, link.href)}
+                                                    className="text-gray-400 hover:text-white transition-colors duration-200 text-sm font-[Regular] cursor-pointer"
                                                 >
                                                     {link.name}
                                                 </a>
