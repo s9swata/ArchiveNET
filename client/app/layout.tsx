@@ -40,7 +40,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`dark ${inter.variable}`}>
       <body className={`${inter.className} antialiased`}>
-        <div className="min-h-screen animated-bg">
+        <div className="min-h-screen bg-black">
           {children}
         </div>
       </body>
