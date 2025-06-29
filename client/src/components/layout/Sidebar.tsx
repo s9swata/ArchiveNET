@@ -8,7 +8,7 @@ import {
     IconSettings,
     IconUserBolt,
 } from "@tabler/icons-react";
-import { getInstances } from "@/lib/api";
+import { getInstances, getUserSubscription } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface Instance {
@@ -45,16 +45,15 @@ export function SidebarDemo() {
             try {
                 const token = await getToken();
                 if (!token) return;
-                
-                // You can replace this with your actual API call to get user subscription
-                // const response = await fetch('/api/user/subscription', {
-                //     headers: { Authorization: `Bearer ${token}` }
-                // });
-                // const subscriptionData = await response.json();
-                // setSubscription(subscriptionData);
-                
-                // For now, we'll use a placeholder
-                setSubscription({ plan: "pro", isActive: true });
+
+                const subscriptionData = await getUserSubscription(token);
+                if (!subscriptionData || !subscriptionData.data) {
+                    console.error("No subscription data found");
+                    setSubscription({ plan: "Free", isActive: false });
+                    return;
+                }
+                console.log("User Subscription:", subscriptionData.data);
+                setSubscription({ plan: subscriptionData.data.plan, isActive: subscriptionData.data.isActive });
             } catch (error) {
                 console.error("Failed to fetch subscription:", error);
                 setSubscription(null);
@@ -134,7 +133,7 @@ export function SidebarDemo() {
                             {/* Enhanced User section at bottom */}
                             <div className="p-2">
                                 <div className="flex items-center gap-3 p-3 rounded-lg bg-neutral-800 hover:bg-neutral-700 transition-colors cursor-pointer">
-                                    <UserButton 
+                                    <UserButton
                                         appearance={{
                                             elements: {
                                                 avatarBox: "w-10 h-10",

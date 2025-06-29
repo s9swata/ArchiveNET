@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8081";
 
 export async function test(token: string) {
   const response = await axios.get(`${API_BASE_URL}/test`, {
@@ -12,7 +12,7 @@ export async function test(token: string) {
 }
 
 export async function getUserSubscription(token: string) {
-  const response = await axios.get(`${API_BASE_URL}/user_subscriptions/list`, {
+  const response = await axios.get(`${API_BASE_URL}/subscriptions`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
