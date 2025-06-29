@@ -7,9 +7,11 @@ import {
     IconBrandTabler,
     IconSettings,
     IconUserBolt,
+    IconCreditCard,
 } from "@tabler/icons-react";
 import { getInstances, getUserSubscription } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SubscriptionManagement } from "./SubscriptionManagement";
 
 interface Instance {
     id: string;
@@ -28,6 +30,7 @@ export function SidebarDemo() {
     const { user } = useUser();
     const [instances, setInstances] = useState<Instance[]>([]);
     const [subscription, setSubscription] = useState<UserSubscription | null>(null);
+    const [activeView, setActiveView] = useState<'dashboard' | 'subscription'>('dashboard');
 
     useEffect(() => {
         const handleGetInstances = async () => {
@@ -71,6 +74,15 @@ export function SidebarDemo() {
             icon: (
                 <IconBrandTabler className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
             ),
+            onClick: () => setActiveView('dashboard'),
+        },
+        {
+            label: "Manage Subscription",
+            href: "#",
+            icon: (
+                <IconCreditCard className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+            ),
+            onClick: () => setActiveView('subscription'),
         },
         {
             label: "Profile",
@@ -108,6 +120,73 @@ export function SidebarDemo() {
         return subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1) + " Plan";
     };
 
+    const renderMainContent = () => {
+        if (activeView === 'subscription') {
+            return <SubscriptionManagement currentPlan={subscription?.plan} />;
+        }
+
+        // Default dashboard view
+        return (
+            <>
+                {/* Project Header */}
+                <div className="mb-6">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <h1 className="text-3xl font-[bold] mb-4 text-white">
+                                Console Dashboard
+                            </h1>
+                            <h2 className="text-2xl font-[semiBold] mb-1 text-white">
+                                Your Instances
+                            </h2>
+                            <p className="text-neutral-400">
+                                Manage your ArchiveNet Instances
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Instances List */}
+                <Card className="bg-neutral-800 border-neutral-700">
+                    <CardHeader>
+                        <CardTitle className="text-white">Your Instances</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="space-y-3">
+                            {instances && instances.length > 0 ? (
+                                instances.map((instance) => (
+                                    <div key={instance.id} className="flex items-center justify-between p-4 rounded-lg bg-neutral-700/50 hover:bg-neutral-700 transition-colors">
+                                        <div>
+                                            <h3 className="text-white font-[semiBold]">{instance.name}</h3>
+                                            <div className="flex items-center gap-2 mt-1">
+                                                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                                <span className="text-xs text-green-400">Online</span>
+                                                <span className="text-xs text-neutral-500">•</span>
+                                                <span className="text-xs text-neutral-400">
+                                                    Created {instance.createdAt ? new Date(instance.createdAt).toLocaleDateString() : 'Unknown'}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-sm text-neutral-300">
+                                                Last used: {instance.lastUsedAt ? new Date(instance.lastUsedAt).toLocaleDateString() : 'Never'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="text-center py-8">
+                                    <p className="text-neutral-400">
+                                        {instances === undefined ? 'Loading instances...' : 'No instances found'}
+                                    </p>
+                                </div>
+                            )}
+                        </div>
+                    </CardContent>
+                </Card>
+            </>
+        );
+    };
+
     return (
         <>
             <SignedIn>
@@ -125,7 +204,16 @@ export function SidebarDemo() {
                                 {/* Navigation Links */}
                                 <div className="flex flex-col gap-2">
                                     {links.map((link, idx) => (
-                                        <SidebarLink key={idx} link={link} />
+                                        <div
+                                            key={idx}
+                                            onClick={link.onClick}
+                                            className="flex items-center justify-start gap-2 group/sidebar py-2 cursor-pointer"
+                                        >
+                                            {link.icon}
+                                            <span className={`text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0 ${open ? 'opacity-100' : 'opacity-0'}`}>
+                                                {link.label}
+                                            </span>
+                                        </div>
                                     ))}
                                 </div>
                             </div>
@@ -159,61 +247,7 @@ export function SidebarDemo() {
 
                     {/* Main Content */}
                     <div className="flex-1 p-6 bg-neutral-900 overflow-y-auto">
-                        {/* Project Header */}
-                        <div className="mb-6">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <h1 className="text-3xl font-[bold] mb-4 text-white">
-                                        Console Dashboard
-                                    </h1>
-                                    <h2 className="text-2xl font-[semiBold] mb-1 text-white">
-                                        Your Instances
-                                    </h2>
-                                    <p className="text-neutral-400">
-                                        Manage your ArchiveNet Instances
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Instances List */}
-                        <Card className="bg-neutral-800 border-neutral-700">
-                            <CardHeader>
-                                <CardTitle className="text-white">Your Instances</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="space-y-3">
-                                    {instances && instances.length > 0 ? (
-                                        instances.map((instance) => (
-                                            <div key={instance.id} className="flex items-center justify-between p-4 rounded-lg bg-neutral-700/50 hover:bg-neutral-700 transition-colors">
-                                                <div>
-                                                    <h3 className="text-white font-[semiBold]">{instance.name}</h3>
-                                                    <div className="flex items-center gap-2 mt-1">
-                                                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                                                        <span className="text-xs text-green-400">Online</span>
-                                                        <span className="text-xs text-neutral-500">•</span>
-                                                        <span className="text-xs text-neutral-400">
-                                                            Created {instance.createdAt ? new Date(instance.createdAt).toLocaleDateString() : 'Unknown'}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <div className="text-right">
-                                                    <p className="text-sm text-neutral-300">
-                                                        Last used: {instance.lastUsedAt ? new Date(instance.lastUsedAt).toLocaleDateString() : 'Never'}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <div className="text-center py-8">
-                                            <p className="text-neutral-400">
-                                                {instances === undefined ? 'Loading instances...' : 'No instances found'}
-                                            </p>
-                                        </div>
-                                    )}
-                                </div>
-                            </CardContent>
-                        </Card>
+                        {renderMainContent()}
                     </div>
                 </div>
             </SignedIn>
