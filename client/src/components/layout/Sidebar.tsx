@@ -5,9 +5,12 @@ import { SignedIn, SignedOut, RedirectToSignIn, useAuth, UserButton, useUser } f
 import {
     IconBrandTabler,
     IconCreditCard,
+    IconChevronDown,
+    IconChevronUp,
 } from "@tabler/icons-react";
 import { getInstances, getUserSubscription } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CodeBlock } from "@/components/ui/code-block";
 import { SubscriptionManagement } from "./SubscriptionManagement";
 
 interface Instance {
@@ -28,6 +31,7 @@ export function SidebarDemo() {
     const [instances, setInstances] = useState<Instance[]>([]);
     const [subscription, setSubscription] = useState<UserSubscription | null>(null);
     const [activeView, setActiveView] = useState<'dashboard' | 'subscription'>('dashboard');
+    const [expandedInstance, setExpandedInstance] = useState<string | null>(null);
 
     useEffect(() => {
         const handleGetInstances = async () => {
@@ -96,6 +100,23 @@ export function SidebarDemo() {
         return subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1);
     };
 
+    const toggleInstanceExpansion = (instanceId: string) => {
+        setExpandedInstance(expandedInstance === instanceId ? null : instanceId);
+    };
+
+    // Placeholder setup instructions - you can edit this later
+    const setupInstructions = `# Install ArchiveNET CLI
+npm install -g @archivenet/cli
+
+# Initialize your instance
+archivenet init --instance-id <your-instance-id>
+
+# Configure your API key
+archivenet config set api-key <your-api-key>
+
+# Start using ArchiveNET
+archivenet connect`;
+
     const renderMainContent = () => {
         if (activeView === 'subscription') {
             return <SubscriptionManagement currentPlan={subscription?.plan} />;
@@ -127,23 +148,65 @@ export function SidebarDemo() {
                         <div className="space-y-3">
                             {instances && instances.length > 0 ? (
                                 instances.map((instance) => (
-                                    <div key={instance.id} className="flex items-center justify-between p-4 rounded-lg bg-neutral-700/50 hover:bg-neutral-700 transition-colors">
-                                        <div>
-                                            <h3 className="text-white font-[semiBold]">Your ArchiveNET Instance</h3>
-                                            <div className="flex items-center gap-2 mt-1">
-                                                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                                                <span className="text-xs text-green-400">Online</span>
-                                                <span className="text-xs text-neutral-500">•</span>
-                                                <span className="text-xs text-neutral-400">
-                                                    Created {instance.createdAt ? new Date(instance.createdAt).toLocaleDateString() : 'Unknown'}
-                                                </span>
+                                    <div key={instance.id} className="rounded-lg bg-neutral-700/50 hover:bg-neutral-700 transition-colors">
+                                        {/* Instance Header */}
+                                        <div 
+                                            className="flex items-center justify-between p-4 cursor-pointer"
+                                            onClick={() => toggleInstanceExpansion(instance.id)}
+                                        >
+                                            <div className="flex-1">
+                                                <h3 className="text-white font-[semiBold]">Your ArchiveNET Instance</h3>
+                                                <div className="flex items-center gap-2 mt-1">
+                                                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                                    <span className="text-xs text-green-400">Online</span>
+                                                    <span className="text-xs text-neutral-500">•</span>
+                                                    <span className="text-xs text-neutral-400">
+                                                        Created {instance.createdAt ? new Date(instance.createdAt).toLocaleDateString() : 'Unknown'}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-4">
+                                                <div className="text-right">
+                                                    <p className="text-sm text-neutral-300">
+                                                        Last used: {instance.lastUsedAt ? new Date(instance.lastUsedAt).toLocaleDateString() : 'Never'}
+                                                    </p>
+                                                </div>
+                                                <div className="text-neutral-400">
+                                                    {expandedInstance === instance.id ? (
+                                                        <IconChevronUp className="h-5 w-5" />
+                                                    ) : (
+                                                        <IconChevronDown className="h-5 w-5" />
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
-                                        <div className="text-right">
-                                            <p className="text-sm text-neutral-300">
-                                                Last used: {instance.lastUsedAt ? new Date(instance.lastUsedAt).toLocaleDateString() : 'Never'}
-                                            </p>
-                                        </div>
+
+                                        {/* Setup Instructions Section */}
+                                        {expandedInstance === instance.id && (
+                                            <div className="px-4 pb-4 border-t border-neutral-600/50">
+                                                <div className="mt-4">
+                                                    <h4 className="text-white font-[semiBold] mb-3 flex items-center gap-2">
+                                                        <span className="text-blue-400">📋</span>
+                                                        Setup Instructions
+                                                    </h4>
+                                                    <div className="bg-neutral-800/50 rounded-lg p-3 border border-neutral-600/30">
+                                                        <p className="text-neutral-300 text-sm mb-3">
+                                                            Follow these steps to connect your instance to your development environment:
+                                                        </p>
+                                                        <CodeBlock 
+                                                            code={setupInstructions}
+                                                            language="bash"
+                                                            filename="setup-instructions.sh"
+                                                        />
+                                                        <div className="mt-3 p-3 bg-blue-900/20 border border-blue-500/30 rounded-lg">
+                                                            <p className="text-blue-300 text-sm">
+                                                                💡 <strong>Tip:</strong> Make sure to replace <code className="bg-blue-800/30 px-1 rounded">&lt;your-instance-id&gt;</code> and <code className="bg-blue-800/30 px-1 rounded">&lt;your-api-key&gt;</code> with your actual values.
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 ))
                             ) : (
