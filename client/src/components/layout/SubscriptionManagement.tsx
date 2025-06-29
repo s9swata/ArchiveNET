@@ -3,7 +3,6 @@
 import { Box, Lock, Settings } from "lucide-react";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { Badge } from "@/components/ui/badge";
-import DynamicButton from "@/components/ui/DynamicButton";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 
@@ -86,13 +85,13 @@ export function SubscriptionManagement({ currentPlan }: SubscriptionManagementPr
                         onClick={() => router.push(`/payments?subscription=${plan.title.toLowerCase()}`)}
                         description={
                             <div>
-                                <div className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4 text-blue-400">
+                                <div className="text-2xl sm:text-3xl font-bold mb-2 sm:mb-3 text-blue-400">
                                     {plan.price}
-                                    <span className="text-xs sm:text-sm font-normal">/month</span>
+                                    <span className="text-xs font-normal">/month</span>
                                 </div>
-                                <ul className="space-y-2">
+                                <ul className="space-y-1">
                                     {plan.features.map((feature, featureIndex) => (
-                                        <li key={featureIndex} className="text-xs sm:text-sm">• {feature}</li>
+                                        <li key={featureIndex} className="text-xs">• {feature}</li>
                                     ))}
                                 </ul>
                             </div>
@@ -118,11 +117,11 @@ interface GridItemProps {
 
 const SubscriptionCard = ({ area, icon, title, description, currentPlan, recommended, onClick }: GridItemProps) => {
     return (
-        <li className={`min-h-[14rem] flex-1 list-none ${area}`.trim()}>
-            <div className="relative h-full rounded-2xl border border-gray-600/30 p-2 md:rounded-3xl md:p-3">
+        <li className={`min-h-[12rem] flex-1 list-none ${area}`.trim()}>
+            <div className="relative h-full rounded-xl border border-gray-600/30 p-2">
                 {/* Glassmorphism Background */}
-                <div className="absolute inset-0 rounded-2xl md:rounded-3xl bg-gradient-to-br from-white/5 via-white/[0.02] to-transparent backdrop-blur-xl" />
-                <div className="absolute inset-0 rounded-2xl md:rounded-3xl bg-gradient-to-tl from-blue-400/5 via-transparent to-white/5" />
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/5 via-white/[0.02] to-transparent backdrop-blur-xl" />
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-tl from-blue-400/5 via-transparent to-white/5" />
                 
                 <GlowingEffect
                     spread={40}
@@ -131,10 +130,10 @@ const SubscriptionCard = ({ area, icon, title, description, currentPlan, recomme
                     proximity={64}
                     inactiveZone={0.01}
                 />
-                <div className="border-0.75 relative flex h-full flex-col justify-center overflow-hidden rounded-xl p-4 sm:p-6 shadow-[0px_0px_27px_0px_#2D2D2D]">
+                <div className="border-0.75 relative flex h-full flex-col justify-center overflow-hidden rounded-lg p-3 sm:p-4 shadow-[0px_0px_27px_0px_#2D2D2D]">
                     <div className="relative flex flex-1 flex-col justify-between">
-                        <div className="flex flex-row justify-between items-start mb-4">
-                            <div className="w-fit rounded-lg border border-gray-600 p-2 bg-white/5 backdrop-blur-sm">
+                        <div className="flex flex-row justify-between items-start mb-3">
+                            <div className="w-fit rounded-lg border border-gray-600 p-1.5 bg-white/5 backdrop-blur-sm">
                                 {icon}
                             </div>
                             {recommended && (
@@ -143,21 +142,27 @@ const SubscriptionCard = ({ area, icon, title, description, currentPlan, recomme
                                 </Badge>
                             )}
                         </div>
-                        <div className="space-y-3 flex-1">
-                            <h3 className="font-sans text-lg sm:text-xl md:text-2xl font-semibold text-balance text-white">
+                        <div className="space-y-2 flex-1">
+                            <h3 className="font-sans text-lg font-semibold text-balance text-white">
                                 {title}
                             </h3>
-                            <div className="font-sans text-sm md:text-base text-neutral-400">
+                            <div className="font-sans text-sm text-neutral-400">
                                 {description}
                             </div>
                         </div>
-                        <div className="mt-4">
+                        <div className="mt-3">
                             {currentPlan ? (
-                                <Button variant="default" className="bg-blue-500 text-white w-full p-2 text-sm">
+                                <Button variant="default" className="bg-blue-500 text-white w-full text-sm">
                                     Current Plan
                                 </Button>
                             ) : (
-                                <DynamicButton title={"Proceed to Checkout"} emoji={"🤟"} onClick={onClick} />
+                                <Button 
+                                    variant="default" 
+                                    className="bg-blue-400 hover:bg-blue-500 text-white w-full text-sm"
+                                    onClick={onClick}
+                                >
+                                    Upgrade to {title}
+                                </Button>
                             )}
                         </div>
                     </div>
