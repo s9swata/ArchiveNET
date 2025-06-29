@@ -1,3 +1,4 @@
+"use client";
 import { SidebarDemo } from '@/components/layout/Sidebar';
 
 // #TODO: Make this mobile responsive
