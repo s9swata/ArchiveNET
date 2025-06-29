@@ -71,7 +71,7 @@ export function Subscriptions({ currentPlan }: { currentPlan?: string }) {
                     Decentralized memory protocol for agentic LLMs. Scalable. Secure.
                 </h2>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 max-w-6xl mx-auto">
                 {plans.map((plan, index) => (
                     <SubscriptionCard

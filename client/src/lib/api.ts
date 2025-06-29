@@ -54,7 +54,7 @@ export async function createNewApiKey (token: string){
 }
 
 export async function getInstances(token: string) {
-  const response = await axios.get(`${API_BASE_URL}/instances/list`, {
+  const response = await axios.get(`${API_BASE_URL}/instances`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

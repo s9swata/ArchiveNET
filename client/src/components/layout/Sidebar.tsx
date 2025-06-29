@@ -3,10 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from "../ui/sidebar";
 import { SignedIn, SignedOut, RedirectToSignIn, useAuth, UserButton, useUser } from "@clerk/nextjs";
 import {
-    IconArrowLeft,
     IconBrandTabler,
-    IconSettings,
-    IconUserBolt,
     IconCreditCard,
 } from "@tabler/icons-react";
 import { getInstances, getUserSubscription } from "@/lib/api";
@@ -40,8 +37,8 @@ export function SidebarDemo() {
                 return;
             }
             const instancesData = await getInstances(token);
-            console.log("Instances:", instancesData);
-            setInstances(instancesData);
+            console.log("Instances:", instancesData.data);
+            setInstances(instancesData.data);
         }
 
         const fetchUserSubscription = async () => {
@@ -84,27 +81,6 @@ export function SidebarDemo() {
             ),
             onClick: () => setActiveView('subscription'),
         },
-        {
-            label: "Profile",
-            href: "#",
-            icon: (
-                <IconUserBolt className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
-            ),
-        },
-        {
-            label: "Settings",
-            href: "#",
-            icon: (
-                <IconSettings className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
-            ),
-        },
-        {
-            label: "Logout",
-            href: "#",
-            icon: (
-                <IconArrowLeft className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
-            ),
-        },
     ];
     const [open, setOpen] = useState(false);
 
@@ -117,7 +93,7 @@ export function SidebarDemo() {
 
     const getSubscriptionDisplay = () => {
         if (!subscription || !subscription.isActive) return "Free Plan";
-        return subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1) + " Plan";
+        return subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1);
     };
 
     const renderMainContent = () => {
@@ -147,16 +123,13 @@ export function SidebarDemo() {
 
                 {/* Instances List */}
                 <Card className="bg-neutral-800 border-neutral-700">
-                    <CardHeader>
-                        <CardTitle className="text-white">Your Instances</CardTitle>
-                    </CardHeader>
                     <CardContent>
                         <div className="space-y-3">
                             {instances && instances.length > 0 ? (
                                 instances.map((instance) => (
                                     <div key={instance.id} className="flex items-center justify-between p-4 rounded-lg bg-neutral-700/50 hover:bg-neutral-700 transition-colors">
                                         <div>
-                                            <h3 className="text-white font-[semiBold]">{instance.name}</h3>
+                                            <h3 className="text-white font-[semiBold]">Your ArchiveNET Instance</h3>
                                             <div className="flex items-center gap-2 mt-1">
                                                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                                                 <span className="text-xs text-green-400">Online</span>
@@ -236,8 +209,8 @@ export function SidebarDemo() {
                                         <div className="text-sm font-[semiBold] text-white truncate">
                                             {getDisplayName()}
                                         </div>
-                                        <div className="text-xs text-neutral-400 truncate">
-                                            {getSubscriptionDisplay()}
+                                        <div className="text-md text-white truncate">
+                                            <span className="text-green-500">{getSubscriptionDisplay()}</span> Plan
                                         </div>
                                     </div>
                                 </div>

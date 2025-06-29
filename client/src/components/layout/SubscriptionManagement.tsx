@@ -74,7 +74,7 @@ export function SubscriptionManagement({ currentPlan }: SubscriptionManagementPr
                     Choose the plan that best fits your needs and unlock more features.
                 </p>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
                 {plans.map((plan, index) => (
                     <SubscriptionCard
@@ -91,7 +91,7 @@ export function SubscriptionManagement({ currentPlan }: SubscriptionManagementPr
                                 </div>
                                 <ul className="space-y-1">
                                     {plan.features.map((feature, featureIndex) => (
-                                        <li key={featureIndex} className="text-xs">• {feature}</li>
+                                        <li key={featureIndex} className="text-md font-[regular] text-white">• {feature}</li>
                                     ))}
                                 </ul>
                             </div>
@@ -122,7 +122,7 @@ const SubscriptionCard = ({ area, icon, title, description, currentPlan, recomme
                 {/* Glassmorphism Background */}
                 <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/5 via-white/[0.02] to-transparent backdrop-blur-xl" />
                 <div className="absolute inset-0 rounded-xl bg-gradient-to-tl from-blue-400/5 via-transparent to-white/5" />
-                
+
                 <GlowingEffect
                     spread={40}
                     glow={true}
@@ -143,10 +143,10 @@ const SubscriptionCard = ({ area, icon, title, description, currentPlan, recomme
                             )}
                         </div>
                         <div className="space-y-2 flex-1">
-                            <h3 className="font-sans text-lg font-semibold text-balance text-white">
+                            <h3 className="font-sans text-2xl font-semibold text-balance text-white">
                                 {title}
                             </h3>
-                            <div className="font-sans text-sm text-neutral-400">
+                            <div className="font-sans text-lg text-neutral-400">
                                 {description}
                             </div>
                         </div>
@@ -156,9 +156,9 @@ const SubscriptionCard = ({ area, icon, title, description, currentPlan, recomme
                                     Current Plan
                                 </Button>
                             ) : (
-                                <Button 
-                                    variant="default" 
-                                    className="bg-blue-400 hover:bg-blue-500 text-white w-full text-sm"
+                                <Button
+                                    variant="default"
+                                    className="bg-blue-500 hover:bg-blue-500/70 text-white w-full text-sm cursor-pointer"
                                     onClick={onClick}
                                 >
                                     Upgrade to {title}

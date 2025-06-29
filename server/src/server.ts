@@ -52,6 +52,7 @@ initializeServices()
 		const deploymentRoutes = await import("./routes/deploy.js");
 		const { webhook } = await import("./routes/webhook.js");
 		const subscriptionRoutes = await import("./routes/subscriptions.js");
+		const instancesRoutes = await import("./routes/instances.js");
 
 		const app = express();
 		const PORT = Number.parseInt(process.env.PORT || "3000", 10);
@@ -103,6 +104,7 @@ initializeServices()
 		app.use("/deploy", deploymentRoutes.default);
 		app.use("/webhook", webhook);
 		app.use("/subscriptions", subscriptionRoutes.default);
+		app.use("/instances", instancesRoutes.default);
 
 		// Global error handling middleware (must be last)
 		app.use(errorHandler);
