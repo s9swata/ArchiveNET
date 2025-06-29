@@ -34,7 +34,7 @@ export const Landing = () => {
                 <NavBar />
 
                 {/* Glass Badge - Responsive positioning */}
-                <div className="absolute top-20 sm:top-24 left-1/2 transform -translate-x-1/2 z-30 px-4">
+                <div className="absolute top-30 sm:top-24 left-1/2 transform -translate-x-1/2 z-30 px-4">
                     <GlassBadge
                         text="Get Universal Context Now!"
                         emoji="🚀"
@@ -43,12 +43,13 @@ export const Landing = () => {
 
                 {/* Main Hero Content */}
                 <div className="absolute inset-0 flex flex-col justify-center items-center z-20 px-4 sm:px-6 lg:px-8">
-                    {/* Main Title */}
+                    {/* Main Title 
                     <div className="text-center mb-8 sm:mb-12">
                         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-[Black] text-white tracking-[4px] sm:tracking-[8px] md:tracking-[15px] lg:tracking-[25px] xl:tracking-[35px] drop-shadow-xl leading-tight">
                             ARCHIVENET
                         </h1>
                     </div>
+                    */}
 
                     {/* Hero Description */}
                     <div className="max-w-4xl mx-auto text-center space-y-4 sm:space-y-6">

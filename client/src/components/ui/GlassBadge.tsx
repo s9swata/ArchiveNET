@@ -5,42 +5,43 @@ interface GlassBadgeProps {
   text: string;
   emoji?: string;
   className?: string;
+  onClick?: () => void;
 }
 
-export const GlassBadge = ({ text, emoji, className = "" }: GlassBadgeProps) => {
+export const GlassBadge = ({ text, emoji, className = "", onClick }: GlassBadgeProps) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: -20, scale: 0.9 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ 
-        duration: 0.8, 
+      transition={{
+        duration: 0.8,
         ease: [0.16, 1, 0.3, 1],
-        delay: 0.2 
+        delay: 0.2
       }}
       className={`relative inline-flex items-center gap-2 ${className}`}
     >
       {/* Main Glass Container */}
-      <div className="relative group">
+      <div className="relative group" onClick={onClick}>
         {/* Background Blur Layer */}
         <div className="absolute inset-0 rounded-full bg-white/5 backdrop-blur-xl border border-white/10" />
-        
+
         {/* Liquid Glass Effect Layers */}
         <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/20 via-white/5 to-transparent opacity-60" />
         <div className="absolute inset-0 rounded-full bg-gradient-to-tl from-blue-400/10 via-transparent to-white/10" />
-        
+
         {/* Inner Glow */}
         <div className="absolute inset-[1px] rounded-full bg-gradient-to-br from-white/10 to-transparent" />
-        
+
         {/* Content Container - Responsive padding */}
         <div className="relative px-3 sm:px-4 md:px-6 py-2 sm:py-3 flex items-center gap-1 sm:gap-2">
           {emoji && (
-            <motion.span 
+            <motion.span
               className="text-sm sm:text-base md:text-lg"
-              animate={{ 
+              animate={{
                 rotate: [0, 10, -10, 0],
                 scale: [1, 1.1, 1]
               }}
-              transition={{ 
+              transition={{
                 duration: 2,
                 repeat: Infinity,
                 repeatType: "reverse",
@@ -50,18 +51,18 @@ export const GlassBadge = ({ text, emoji, className = "" }: GlassBadgeProps) => 
               {emoji}
             </motion.span>
           )}
-          
+
           <span className="text-xs sm:text-sm md:text-base font-[semiBold] text-white/90 tracking-wide whitespace-nowrap">
             {text}
           </span>
         </div>
-        
+
         {/* Hover Effects */}
         <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400/5 via-white/5 to-blue-400/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-        
+
         {/* Outer Glow */}
         <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-blue-400/20 via-white/10 to-blue-400/20 blur-sm opacity-0 group-hover:opacity-60 transition-opacity duration-500" />
-        
+
         {/* Shimmer Effect */}
         <div className="absolute inset-0 rounded-full overflow-hidden">
           <motion.div
@@ -79,7 +80,7 @@ export const GlassBadge = ({ text, emoji, className = "" }: GlassBadgeProps) => 
           />
         </div>
       </div>
-      
+
       {/* Floating Particles - Hidden on mobile for performance */}
       <div className="absolute inset-0 pointer-events-none hidden sm:block">
         {[...Array(3)].map((_, i) => (
