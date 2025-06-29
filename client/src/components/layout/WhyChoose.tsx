@@ -5,46 +5,46 @@ import { IconShield, IconNetwork, IconBrain, IconCode, IconDatabase, IconLock } 
 export const WhyChooseArchiveNet = () => {
     const features = [
         {
-            icon: <IconShield className="w-8 h-8 text-blue-400" />,
+            icon: <IconShield className="w-6 h-6 text-blue-400" />,
             title: "Decentralized Security",
             description: "Your data is secured across a distributed network, eliminating single points of failure and ensuring maximum protection."
         },
         {
-            icon: <IconBrain className="w-8 h-8 text-purple-400" />,
+            icon: <IconBrain className="w-6 h-6 text-blue-400" />,
             title: "AI-Native Architecture",
             description: "Built specifically for AI agents with optimized memory structures and context management for superior performance."
         },
         {
-            icon: <IconNetwork className="w-8 h-8 text-green-400" />,
+            icon: <IconNetwork className="w-6 h-6 text-green-400" />,
             title: "Universal Compatibility",
             description: "Works seamlessly with all major AI models and frameworks, providing a unified memory layer across platforms."
         },
         {
-            icon: <IconDatabase className="w-8 h-8 text-orange-400" />,
+            icon: <IconDatabase className="w-6 h-6 text-orange-400" />,
             title: "Persistent Memory",
             description: "Never lose context again. Your AI agents maintain continuous memory across sessions and interactions."
         },
         {
-            icon: <IconLock className="w-8 h-8 text-red-400" />,
+            icon: <IconLock className="w-6 h-6 text-red-400" />,
             title: "Privacy First",
             description: "You own your data completely. No corporate databases, no data mining, just pure decentralized ownership."
         },
         {
-            icon: <IconCode className="w-8 h-8 text-cyan-400" />,
+            icon: <IconCode className="w-6 h-6 text-cyan-400" />,
             title: "Developer Friendly",
             description: "Simple APIs and comprehensive documentation make integration effortless for developers and researchers."
         }
     ];
 
     return (
-        <section id="why-choose" className="relative py-20 sm:py-24 md:py-32 bg-black overflow-hidden">
+        <section id="why-choose" className="relative py-16 sm:py-20 md:py-24 bg-black overflow-hidden">
             {/* Background Effects */}
-            <div className="absolute inset-0 bg-gradient-to-b from-violet-900/10 via-transparent to-transparent" />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(120,119,198,0.1),transparent_50%)]" />
+            <div className="absolute inset-0 bg-gradient-to-b from-blue-900/10 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(59,130,246,0.1),transparent_50%)]" />
 
             {/* Animated Background Elements */}
-            <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
-            <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000" />
+            <div className="absolute top-20 left-10 w-48 h-48 bg-blue-500/5 rounded-full blur-3xl animate-pulse" />
+            <div className="absolute bottom-20 right-10 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl animate-pulse delay-1000" />
 
             <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Section Header */}
@@ -53,12 +53,12 @@ export const WhyChooseArchiveNet = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
                     viewport={{ once: true }}
-                    className="text-center mb-16 lg:mb-20"
+                    className="text-center mb-12 lg:mb-16"
                 >
-                    <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-[Black] text-white mb-6 tracking-wider">
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-[Black] text-white mb-4 tracking-wider">
                         WHY CHOOSE
                     </h2>
-                    <h3 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-[Black] text-blue-400 mb-8 tracking-wider">
+                    <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-[Black] text-blue-400 mb-6 tracking-wider">
                         ARCHIVENET?
                     </h3>
                     <p className="text-lg sm:text-xl text-gray-300 font-[Regular] max-w-3xl mx-auto leading-relaxed">
@@ -67,7 +67,7 @@ export const WhyChooseArchiveNet = () => {
                 </motion.div>
 
                 {/* Features Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
                     {features.map((feature, index) => (
                         <motion.div
                             key={index}
@@ -78,30 +78,27 @@ export const WhyChooseArchiveNet = () => {
                             className="group relative"
                         >
                             {/* Glassmorphism Card */}
-                            <div className="relative h-full p-8 rounded-2xl backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-300 group-hover:scale-105 group-hover:border-white/20">
-                                {/* Gradient Border Effect */}
-                                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-cyan-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm" />
-
+                            <div className="relative h-full p-6 rounded-xl backdrop-blur-xl bg-white/5 border border-white/10 hover:bg-gray-500/20 transition-all duration-300 group-hover:scale-105 group-hover:border-white/20">
                                 {/* Content */}
-                                <div className="relative z-10 space-y-6">
+                                <div className="relative z-10 space-y-4">
                                     {/* Icon Container */}
-                                    <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-white/10 to-white/5 border border-white/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                    <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-white/10 to-white/5 border border-white/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                                         {feature.icon}
                                     </div>
 
                                     {/* Title */}
-                                    <h4 className="text-xl sm:text-2xl font-[semiBold] text-white group-hover:text-blue-300 transition-colors duration-300">
+                                    <h4 className="text-lg sm:text-xl font-[semiBold] text-white group-hover:text-gray-200 transition-colors duration-300">
                                         {feature.title}
                                     </h4>
 
                                     {/* Description */}
-                                    <p className="text-gray-400 font-[Regular] leading-relaxed group-hover:text-gray-300 transition-colors duration-300">
+                                    <p className="text-gray-400 font-[Regular] text-sm leading-relaxed group-hover:text-gray-300 transition-colors duration-300">
                                         {feature.description}
                                     </p>
                                 </div>
 
                                 {/* Hover Glow Effect */}
-                                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-gray-500/5 via-gray-400/5 to-gray-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                             </div>
                         </motion.div>
                     ))}
@@ -113,12 +110,12 @@ export const WhyChooseArchiveNet = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.6 }}
                     viewport={{ once: true }}
-                    className="text-center mt-16 lg:mt-20"
+                    className="text-center mt-12 lg:mt-16"
                 >
                     <div className="relative inline-block">
                         {/* Glassmorphism Container */}
-                        <div className="relative px-8 py-6 rounded-2xl backdrop-blur-xl bg-white/5 border border-white/10">
-                            <p className="text-lg sm:text-xl text-white font-[semiBold] mb-4">
+                        <div className="relative px-6 py-4 rounded-xl backdrop-blur-xl bg-white/5 border border-white/10">
+                            <p className="text-lg sm:text-xl text-white font-[semiBold] mb-2">
                                 Ready to revolutionize your AI's memory?
                             </p>
                             <p className="text-gray-400 font-[Regular]">
@@ -127,7 +124,7 @@ export const WhyChooseArchiveNet = () => {
                         </div>
 
                         {/* Background Glow */}
-                        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-cyan-500/20 blur-xl opacity-50" />
+                        <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/10 via-blue-400/10 to-blue-500/10 blur-xl opacity-50" />
                     </div>
                 </motion.div>
             </div>
