@@ -7,9 +7,13 @@ import {
     IconBrandTabler,
     IconSettings,
     IconUserBolt,
+    IconCrown,
+    IconStar,
+    IconDiamond,
 } from "@tabler/icons-react";
 import { getInstances, getUserSubscription } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { GlowingEffect } from "../ui/glowing-effect";
 
 interface Instance {
     id: string;
@@ -23,6 +27,7 @@ interface UserSubscription {
     isActive: boolean;
     quotaUsed?: number;
     quotaLimit?: number;
+    renewsAt?: string;
 }
 
 export function SidebarDemo() {
@@ -59,7 +64,8 @@ export function SidebarDemo() {
                     plan: subscriptionData.data.plan, 
                     isActive: subscriptionData.data.isActive,
                     quotaUsed: subscriptionData.data.quotaUsed,
-                    quotaLimit: subscriptionData.data.quotaLimit
+                    quotaLimit: subscriptionData.data.quotaLimit,
+                    renewsAt: subscriptionData.data.renewsAt
                 });
             } catch (error) {
                 console.error("Failed to fetch subscription:", error);
@@ -123,6 +129,120 @@ export function SidebarDemo() {
         if (!subscription || !subscription.quotaLimit || !subscription.quotaUsed) return 0;
         return (subscription.quotaUsed / subscription.quotaLimit) * 100;
     };
+
+    const getPlanIcon = () => {
+        if (!subscription || !subscription.isActive) return <IconCrown className="w-4 h-4 text-gray-400" />;
+        
+        switch (subscription.plan.toLowerCase()) {
+            case 'basic':
+                return <IconCrown className="w-4 h-4 text-blue-400" />;
+            case 'pro':
+                return <IconStar className="w-4 h-4 text-purple-400" />;
+            case 'enterprise':
+                return <IconDiamond className="w-4 h-4 text-yellow-400" />;
+            default:
+                return <IconCrown className="w-4 h-4 text-gray-400" />;
+        }
+    };
+
+    const getPlanColor = () => {
+        if (!subscription || !subscription.isActive) return 'from-gray-500/20 to-gray-600/20';
+        
+        switch (subscription.plan.toLowerCase()) {
+            case 'basic':
+                return 'from-blue-500/20 to-blue-600/20';
+            case 'pro':
+                return 'from-purple-500/20 to-purple-600/20';
+            case 'enterprise':
+                return 'from-yellow-500/20 to-yellow-600/20';
+            default:
+                return 'from-gray-500/20 to-gray-600/20';
+        }
+    };
+
+    const formatRenewalDate = () => {
+        if (!subscription?.renewsAt) return null;
+        return new Date(subscription.renewsAt).toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+        });
+    };
+
+    const SubscriptionCard = () => (
+        <div className="relative min-h-[120px] mb-4">
+            <div className="relative h-full rounded-xl border border-gray-600/30 p-2">
+                <GlowingEffect
+                    spread={40}
+                    glow={true}
+                    disabled={false}
+                    proximity={64}
+                    inactiveZone={0.01}
+                />
+                
+                {/* Liquid Glass Background */}
+                <div className="absolute inset-0 rounded-xl overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-white/2 to-transparent" />
+                    <div className={`absolute inset-0 bg-gradient-to-br ${getPlanColor()}`} />
+                    <div className="absolute inset-0 backdrop-blur-xl bg-black/20" />
+                </div>
+
+                {/* Content */}
+                <div className="relative z-10 p-4 h-full flex flex-col justify-between">
+                    <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                            {getPlanIcon()}
+                            <span className="text-white font-[semiBold] text-sm">
+                                {getSubscriptionDisplay()}
+                            </span>
+                        </div>
+                        {subscription?.isActive && (
+                            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                        )}
+                    </div>
+
+                    {subscription?.isActive ? (
+                        <div className="space-y-2">
+                            {/* Usage Bar */}
+                            <div className="space-y-1">
+                                <div className="flex justify-between text-xs">
+                                    <span className="text-neutral-300">Usage</span>
+                                    <span className="text-white">
+                                        {subscription.quotaUsed || 0} / {subscription.quotaLimit || 0}
+                                    </span>
+                                </div>
+                                <div className="w-full bg-white/10 rounded-full h-1.5">
+                                    <div 
+                                        className="bg-gradient-to-r from-blue-400 to-purple-400 h-1.5 rounded-full transition-all duration-300" 
+                                        style={{ width: `${Math.min(getUsagePercentage(), 100)}%` }}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Renewal Date */}
+                            {formatRenewalDate() && (
+                                <div className="text-xs text-neutral-400">
+                                    Renews {formatRenewalDate()}
+                                </div>
+                            )}
+                        </div>
+                    ) : (
+                        <div className="space-y-2">
+                            <div className="text-xs text-neutral-400">
+                                Limited to 100 API calls
+                            </div>
+                            <button 
+                                onClick={() => window.location.href = '/get-started'}
+                                className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white text-xs py-2 px-3 rounded-lg font-[semiBold] transition-all duration-200 transform hover:scale-105"
+                            >
+                                Upgrade Now
+                            </button>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
 
     const renderDashboardContent = () => {
         if (isFreePlan()) {
@@ -283,6 +403,11 @@ export function SidebarDemo() {
                                     <h1 className="text-xl font-[bold] text-white px-2">
                                         ArchiveNet
                                     </h1>
+                                </div>
+
+                                {/* Subscription Card */}
+                                <div className="px-2 mb-6">
+                                    <SubscriptionCard />
                                 </div>
 
                                 {/* Navigation Links */}
