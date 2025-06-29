@@ -23,11 +23,11 @@ export const Footer = () => {
     // Smooth scroll function for footer links
     const handleFooterLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
         e.preventDefault();
-        
+
         if (href.startsWith('#')) {
             const targetId = href.substring(1);
             const targetElement = document.getElementById(targetId);
-            
+
             if (targetElement) {
                 targetElement.scrollIntoView({
                     behavior: 'smooth',
@@ -42,7 +42,7 @@ export const Footer = () => {
             {/* Background Effects */}
             <div className="absolute inset-0 bg-gradient-to-t from-violet-900/5 via-transparent to-transparent" />
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(120,119,198,0.1),transparent_50%)]" />
-            
+
             {/* Glassmorphism Container */}
             <div className="relative backdrop-blur-xl bg-black/30 border-t border-white/5">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -74,8 +74,8 @@ export const Footer = () => {
 
                                     {/* Description */}
                                     <p className="text-gray-400 font-[Regular] text-sm leading-relaxed max-w-md">
-                                        World's first decentralized protocol for Agentic Models — a trustless, 
-                                        scalable framework that lets AI agents access, store, and manage context 
+                                        World&apos;s first decentralized protocol for Agentic Models — a trustless,
+                                        scalable framework that lets AI agents access, store, and manage context
                                         securely across networks.
                                     </p>
 
@@ -132,7 +132,7 @@ export const Footer = () => {
                                     <p className="text-gray-400 text-sm font-[Regular] mb-4">
                                         Get the latest updates on ArchiveNET development.
                                     </p>
-                                    
+
                                     <div className="space-y-3">
                                         <input
                                             type="email"

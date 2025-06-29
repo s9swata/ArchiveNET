@@ -116,7 +116,7 @@ export const WhyChooseArchiveNet = () => {
                         {/* Glassmorphism Container */}
                         <div className="relative px-6 py-4 rounded-xl backdrop-blur-xl bg-white/5 border border-white/10">
                             <p className="text-lg sm:text-xl text-white font-[semiBold] mb-2">
-                                Ready to revolutionize your AI's memory?
+                                Ready to revolutionize your AI&apos;s memory?
                             </p>
                             <p className="text-gray-400 font-[Regular]">
                                 Join thousands of developers building the future of decentralized AI

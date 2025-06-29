@@ -4,7 +4,6 @@ import background from "../../../public/pictures/blackhole.png"
 import Image from "next/image";
 import Paragraph from './Character';
 import Marquee from "./Marquee";
-import { BentoGridDemo } from "./BentoGrid";
 import { Subscriptions } from "./Subscriptions";
 import { HeroButton } from "../ui/HeroButton";
 import { Footer } from "./Footer";
@@ -22,7 +21,7 @@ export const Landing = () => {
                 <Image
                     src={background}
                     alt="Background"
-                    className="absolute inset-0 top-30 object-cover w-full h-full z-10 opacity-80"
+                    className="absolute inset-0 top-20 object-cover w-full h-full z-10 opacity-80"
                     priority
                 />
 
@@ -54,10 +53,10 @@ export const Landing = () => {
                     {/* Hero Description */}
                     <div className="max-w-4xl mx-auto text-center space-y-4 sm:space-y-6">
                         <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-[Black] text-white leading-tight">
-                            WORLD'S FIRST DECENTRALIZED PROTOCOL FOR AGENTIC MODELS
+                            WORLD&apos;S FIRST DECENTRALIZED PROTOCOL FOR AGENTIC MODELS
                         </h2>
                         <p className="text-sm sm:text-base md:text-lg lg:text-xl font-[semiBold] text-white/90 leading-relaxed max-w-3xl mx-auto">
-                            Introducing the world's first decentralized protocol for Agentic Models — a trustless,
+                            Introducing the world&apos;s first decentralized protocol for Agentic Models — a trustless,
                             scalable framework that lets AI agents access, store, and manage context securely across networks.
                             Built for interoperability, privacy, and permanence.
                         </p>
