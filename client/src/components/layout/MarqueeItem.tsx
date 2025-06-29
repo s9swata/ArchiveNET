@@ -19,7 +19,14 @@ const MarqueeItem = ({ images, from, to }: MarqueeItemProps) => {
                 className="flex flex-shrink-0"
             >
                 {images.map((image: string, index: number) => {
-                    return <img className="h-40 w-56 pr-20" src={image} key={index} />;
+                    return (
+                        <img 
+                            className="h-24 w-32 sm:h-32 sm:w-40 md:h-36 md:w-48 lg:h-40 lg:w-56 pr-8 sm:pr-12 md:pr-16 lg:pr-20" 
+                            src={image} 
+                            key={index} 
+                            alt={`Logo ${index}`}
+                        />
+                    );
                 })}
             </motion.div>
 
@@ -30,7 +37,14 @@ const MarqueeItem = ({ images, from, to }: MarqueeItemProps) => {
                 className="flex flex-shrink-0"
             >
                 {images.map((image: string, index: number) => {
-                    return <img className="h-40 w-56 pr-20" src={image} key={index} />;
+                    return (
+                        <img 
+                            className="h-24 w-32 sm:h-32 sm:w-40 md:h-36 md:w-48 lg:h-40 lg:w-56 pr-8 sm:pr-12 md:pr-16 lg:pr-20" 
+                            src={image} 
+                            key={index} 
+                            alt={`Logo ${index}`}
+                        />
+                    );
                 })}
             </motion.div>
         </div>

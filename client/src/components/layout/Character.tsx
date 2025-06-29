@@ -5,12 +5,12 @@ import smile from "../../../public/emojis/smile.png"
 import smirk_cat from "../../../public/emojis/smirk_cat.png";
 import sunglasses from "../../../public/emojis/sunglasses.png";
 import brain from "../../../public/emojis/brain.png";
+
 interface ParagraphProps {
     value: string;
     style: string;
     highlightWords?: string[];
 }
-
 
 const emojiMap: Record<string, string> = {
     ":smile:": smile.src,
@@ -29,7 +29,6 @@ export default function Paragraph({
         target: element,
         offset: ["start 0.6", "end 0.35"],
     });
-
 
     const tokens = value.split(/(\s+|:[a-zA-Z0-9_]+:)/g).filter(Boolean);
 
@@ -75,7 +74,7 @@ const Emoji = ({ src, alt, range, progress }: EmojiProps) => {
     const opacity = useTransform(progress, range, [0, 1]);
 
     return (
-        <span className="inline-block w-12 h-12 mt-7">
+        <span className="inline-block w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 mt-4 sm:mt-6 md:mt-7">
             <motion.img
                 src={src}
                 alt={alt}
@@ -99,7 +98,7 @@ const Word = ({ children, range, progress, isHighlighted }: WordProps) => {
     const step = amount / characters.length;
 
     return (
-        <span className="mr-2 mt-4">
+        <span className="mr-1 sm:mr-2 mt-2 sm:mt-3 md:mt-4">
             {characters.map((char, i) => {
                 const start = range[0] + i * step;
                 const end = range[0] + (i + 1) * step;

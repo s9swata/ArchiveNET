@@ -31,11 +31,11 @@ export const GlassBadge = ({ text, emoji, className = "" }: GlassBadgeProps) => 
         {/* Inner Glow */}
         <div className="absolute inset-[1px] rounded-full bg-gradient-to-br from-white/10 to-transparent" />
         
-        {/* Content Container */}
-        <div className="relative px-6 py-3 flex items-center gap-2">
+        {/* Content Container - Responsive padding */}
+        <div className="relative px-3 sm:px-4 md:px-6 py-2 sm:py-3 flex items-center gap-1 sm:gap-2">
           {emoji && (
             <motion.span 
-              className="text-lg"
+              className="text-sm sm:text-base md:text-lg"
               animate={{ 
                 rotate: [0, 10, -10, 0],
                 scale: [1, 1.1, 1]
@@ -51,7 +51,7 @@ export const GlassBadge = ({ text, emoji, className = "" }: GlassBadgeProps) => 
             </motion.span>
           )}
           
-          <span className="text-sm font-[semiBold] text-white/90 tracking-wide whitespace-nowrap">
+          <span className="text-xs sm:text-sm md:text-base font-[semiBold] text-white/90 tracking-wide whitespace-nowrap">
             {text}
           </span>
         </div>
@@ -80,8 +80,8 @@ export const GlassBadge = ({ text, emoji, className = "" }: GlassBadgeProps) => 
         </div>
       </div>
       
-      {/* Floating Particles */}
-      <div className="absolute inset-0 pointer-events-none">
+      {/* Floating Particles - Hidden on mobile for performance */}
+      <div className="absolute inset-0 pointer-events-none hidden sm:block">
         {[...Array(3)].map((_, i) => (
           <motion.div
             key={i}

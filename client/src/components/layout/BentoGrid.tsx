@@ -14,26 +14,34 @@ import graph from "../../../public/pictures/graph.png";
 
 export function BentoGridDemo() {
     return (
-        <BentoGrid className="max-w-4xl mx-auto md:auto-rows-[28rem]">
-            {items.map((item, i) => (
-                <BentoGridItem
-                    key={i}
-                    title={item.title}
-                    description={item.description}
-                    className={item.className}
-                    icon={item.icon}
-                    image={item.image ? (
-                        <Image
-                            src={item.image}
-                            alt={item.title}
-                            width={200}
-                            height={200}
-                            className={item.title === "On-Chain Context Layer" ? "flex justify-center object-cover ml-6" : (item.title === "No Corporate Databases" ? "w-full overflow-hidden object-cover" : "w-full h-48 object-cover rounded-lg")}
-                        />
-                    ) : <></>}
-                />
-            ))}
-        </BentoGrid>
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <BentoGrid className="max-w-5xl mx-auto md:auto-rows-[20rem] lg:auto-rows-[24rem] xl:auto-rows-[28rem]">
+                {items.map((item, i) => (
+                    <BentoGridItem
+                        key={i}
+                        title={item.title}
+                        description={item.description}
+                        className={item.className}
+                        icon={item.icon}
+                        image={item.image ? (
+                            <Image
+                                src={item.image}
+                                alt={item.title}
+                                width={200}
+                                height={200}
+                                className={
+                                    item.title === "On-Chain Context Layer" 
+                                        ? "flex justify-center object-cover ml-2 sm:ml-4 md:ml-6" 
+                                        : item.title === "No Corporate Databases" 
+                                            ? "w-full overflow-hidden object-cover" 
+                                            : "w-full h-32 sm:h-40 md:h-48 object-cover rounded-lg"
+                                }
+                            />
+                        ) : <></>}
+                    />
+                ))}
+            </BentoGrid>
+        </div>
     );
 }
 

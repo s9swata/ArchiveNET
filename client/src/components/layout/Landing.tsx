@@ -13,75 +13,103 @@ import { WhyChooseArchiveNet } from "./WhyChoose";
 import { GlassBadge } from "../ui/GlassBadge";
 import { HeroFloatingParticles } from "../ui/FloatingParticles";
 
-// #TODO: Make this mobile responsive
-
 export const Landing = () => {
     const router = useRouter();
     return (
         <>
-            <div className="w-full bg-black h-screen relative overflow-hidden">
-                <Image src={background} alt="Background" className="absolute inset-0 object-cover w-full h-full z-10 opacity-80" />
+            {/* Hero Section */}
+            <div className="w-full bg-black min-h-screen relative overflow-hidden">
+                <Image 
+                    src={background} 
+                    alt="Background" 
+                    className="absolute inset-0 object-cover w-full h-full z-10 opacity-80" 
+                    priority
+                />
                 
-                {/* Floating Particles */}
-                <HeroFloatingParticles />
+                {/* Floating Particles - Hidden on mobile for performance */}
+                <div className="hidden md:block">
+                    <HeroFloatingParticles />
+                </div>
                 
                 <NavBar />
                 
-                {/* Glass Badge */}
-                <div className="absolute top-24 left-1/2 transform -translate-x-1/2 z-30">
+                {/* Glass Badge - Responsive positioning */}
+                <div className="absolute top-20 sm:top-24 left-1/2 transform -translate-x-1/2 z-30 px-4">
                     <GlassBadge 
                         text="Get Universal Context Now!" 
                         emoji="🚀"
                     />
                 </div>
-            </div>
-            <div className="absolute top-1/3 w-screen px-4">
-                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-[Black] text-white tracking-[8px] sm:tracking-[15px] md:tracking-[20px] lg:tracking-[30px] xl:tracking-[35px] text-center drop-shadow-xl">ARCHIVENET</h1>
-            </div>
-            <div className="z-20 absolute bottom-0 left-0 p-4 max-w-[90%] sm:max-w-[70%] md:max-w-[60%] lg:max-w-[50%] xl:max-w-[40%]">
-                <div>
-                    <h1 className="font-[Black] text-white text-xl sm:text-2xl md:text-3xl lg:text-4xl">WORLD&apos;S FIRST DECENTRALIZED PROTOCOL FOR AGENTIC MODELS</h1>
-                    <h2 className="font-[semiBold] text-white text-sm sm:text-base md:text-[18px] mt-3 sm:mt-4 md:mt-5">Introducing the world&apos;s first decentralized protocol for Agentic Models — a trustless, scalable framework that lets AI agents access, store, and manage context securely across networks. Built for interoperability, privacy, and permanence</h2>
+
+                {/* Main Hero Content */}
+                <div className="absolute inset-0 flex flex-col justify-center items-center z-20 px-4 sm:px-6 lg:px-8">
+                    {/* Main Title */}
+                    <div className="text-center mb-8 sm:mb-12">
+                        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-[Black] text-white tracking-[4px] sm:tracking-[8px] md:tracking-[15px] lg:tracking-[25px] xl:tracking-[35px] drop-shadow-xl leading-tight">
+                            ARCHIVENET
+                        </h1>
+                    </div>
+
+                    {/* Hero Description */}
+                    <div className="max-w-4xl mx-auto text-center space-y-4 sm:space-y-6">
+                        <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-[Black] text-white leading-tight">
+                            WORLD'S FIRST DECENTRALIZED PROTOCOL FOR AGENTIC MODELS
+                        </h2>
+                        <p className="text-sm sm:text-base md:text-lg lg:text-xl font-[semiBold] text-white/90 leading-relaxed max-w-3xl mx-auto">
+                            Introducing the world's first decentralized protocol for Agentic Models — a trustless, 
+                            scalable framework that lets AI agents access, store, and manage context securely across networks. 
+                            Built for interoperability, privacy, and permanence.
+                        </p>
+                    </div>
+                </div>
+
+                {/* Feature Cards - Bottom positioning for larger screens */}
+                <div className="hidden lg:flex absolute bottom-10 right-4 xl:right-10 space-x-4 max-w-2xl z-20">
+                    <div className="flex-1 bg-black/30 backdrop-blur-md rounded-lg p-4 border border-white/10">
+                        <h3 className="text-lg xl:text-xl font-[Black] text-white mb-2">On-Chain Vector Engine</h3>
+                        <p className="text-xs xl:text-sm font-[semiBold] text-white/80">
+                            Enables secure, decentralized storage and retrieval of vector embeddings directly on the blockchain for trustless AI computation.
+                        </p>
+                    </div>
+                    <div className="flex-1 bg-black/30 backdrop-blur-md rounded-lg p-4 border border-white/10">
+                        <h3 className="text-lg xl:text-xl font-[Black] text-white mb-2">Universal Memory Context</h3>
+                        <p className="text-xs xl:text-sm font-[semiBold] text-white/80">
+                            Persistent, cross-agent memory for LLMs—ensuring continuity, personalization, and shared understanding across interactions.
+                        </p>
+                    </div>
                 </div>
             </div>
 
-            {/* Lower right corner div */}
-            <div className="hidden md:flex absolute bottom-10 right-0 p-4 flex-row space-x-4 max-w-[40vh]">
-                <div className="flex flex-col justify-between">
-                    <h1 className="text-lg lg:text-xl font-[Black] text-white">On-Chain Vector Engine</h1>
-                    <h2 className="text-xs font-[semiBold] text-white mt-5">Enables secure, decentralized storage and retrieval of vector embeddings directly on the blockchain for trustless AI computation.
-                    </h2>
-                </div>
-                <div className="flex flex-col justify-between">
-                    <h1 className="text-lg lg:text-xl font-[Black] text-white">Universal Memory Context</h1>
-                    <h2 className="text-xs font-[semiBold] text-white mt-5">Persistent, cross-agent memory for LLMs—ensuring continuity, personalization, and shared understanding across interactions.
-                    </h2>
-                </div>
-            </div>
-            <div className="bg-black pt-10 sm:pt-15 md:pt-20 px-4 sm:px-6 md:px-10 flex justify-center items-center overflow-x-hidden">
+            {/* Marquee Section */}
+            <div className="bg-black pt-8 sm:pt-12 md:pt-16 lg:pt-20 px-4 sm:px-6 md:px-8 lg:px-10 flex justify-center items-center overflow-hidden">
                 <Marquee />
             </div>
+
             {/* Why Choose ArchiveNet Section */}
-            <section id="why-choose" className="">
+            <section id="why-choose">
                 <WhyChooseArchiveNet />
             </section>
 
             {/* Features Section - BentoGrid */}
-            <section id="features" className="my-5 sm:my-7 md:my-10 dark">
+            <section id="features" className="my-8 sm:my-10 md:my-12 lg:my-16 px-4 sm:px-6 lg:px-8 dark">
                 <BentoGridDemo />
             </section>
 
-            <div className='w-full bg-black'>
-                <Paragraph value={"Take the first :smirk_cat: step towards secure :smile:, universal memory for agentic models :sunglasses: , unlock shared context and scalable :brain: intelligence"} style={"w-full px-4 sm:px-10 md:px-20 lg:px-30 pt-10 sm:pt-15 md:pt-20 text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-[semiBold] text-[#dfdcff] text-center"}>
-                </Paragraph>
+            {/* Animated Text Section */}
+            <div className='w-full bg-black px-4 sm:px-6 lg:px-8'>
+                <Paragraph 
+                    value={"Take the first :smirk_cat: step towards secure :smile:, universal memory for agentic models :sunglasses: , unlock shared context and scalable :brain: intelligence"} 
+                    style={"w-full pt-8 sm:pt-12 md:pt-16 lg:pt-20 text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-[semiBold] text-[#dfdcff] text-center leading-tight"}
+                />
             </div>
 
             {/* Pricing Section */}
-            <section id="pricing" className="my-10 sm:my-15 md:my-20">
+            <section id="pricing" className="my-8 sm:my-12 md:my-16 lg:my-20 px-4 sm:px-6 lg:px-8">
                 <Subscriptions />
             </section>
 
-            <div className="dark">
+            {/* CTA Button */}
+            <div className="dark px-4 sm:px-6 lg:px-8">
                 <HeroButton onClick={() => router.push('/get-started')} />
             </div>
 
