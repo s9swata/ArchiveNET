@@ -10,6 +10,7 @@ import { HeroButton } from "../ui/HeroButton";
 import { Footer } from "./Footer";
 import { useRouter } from "next/navigation";
 import { WhyChooseArchiveNet } from "./WhyChoose";
+import { GlassBadge } from "../ui/GlassBadge";
 
 // #TODO: Make this mobile responsive
 
@@ -20,6 +21,14 @@ export const Landing = () => {
             <div className="w-full bg-black h-screen">
                 <Image src={background} alt="Background" className="absolute inset-0 object-cover w-full h-full z-10 opacity-80" />
                 <NavBar />
+                
+                {/* Glass Badge */}
+                <div className="absolute top-24 left-1/2 transform -translate-x-1/2 z-30">
+                    <GlassBadge 
+                        text="Get Universal Context Now!" 
+                        emoji="🚀"
+                    />
+                </div>
             </div>
             <div className="absolute top-1/3 w-screen px-4">
                 <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-[Black] text-white tracking-[8px] sm:tracking-[15px] md:tracking-[20px] lg:tracking-[30px] xl:tracking-[35px] text-center drop-shadow-xl">ARCHIVENET</h1>
