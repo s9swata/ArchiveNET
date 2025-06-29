@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from "../ui/sidebar";
-import { SignedIn, SignedOut, RedirectToSignIn, useAuth, UserButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut, RedirectToSignIn, useAuth, UserButton, useUser } from "@clerk/nextjs";
 import {
     IconArrowLeft,
     IconBrandTabler,
@@ -18,10 +18,16 @@ interface Instance {
     lastUsedAt?: string;
 }
 
-export function SidebarDemo() {
+interface UserSubscription {
+    plan: string;
+    isActive: boolean;
+}
 
+export function SidebarDemo() {
     const { getToken } = useAuth();
+    const { user } = useUser();
     const [instances, setInstances] = useState<Instance[]>([]);
+    const [subscription, setSubscription] = useState<UserSubscription | null>(null);
 
     useEffect(() => {
         const handleGetInstances = async () => {
@@ -35,8 +41,30 @@ export function SidebarDemo() {
             setInstances(instancesData);
         }
 
+        const fetchUserSubscription = async () => {
+            try {
+                const token = await getToken();
+                if (!token) return;
+                
+                // You can replace this with your actual API call to get user subscription
+                // const response = await fetch('/api/user/subscription', {
+                //     headers: { Authorization: `Bearer ${token}` }
+                // });
+                // const subscriptionData = await response.json();
+                // setSubscription(subscriptionData);
+                
+                // For now, we'll use a placeholder
+                setSubscription({ plan: "pro", isActive: true });
+            } catch (error) {
+                console.error("Failed to fetch subscription:", error);
+                setSubscription(null);
+            }
+        };
+
         handleGetInstances();
+        fetchUserSubscription();
     }, [getToken])
+
     const links = [
         {
             label: "Dashboard",
@@ -68,6 +96,19 @@ export function SidebarDemo() {
         },
     ];
     const [open, setOpen] = useState(false);
+
+    const getDisplayName = () => {
+        if (user?.fullName) return user.fullName;
+        if (user?.firstName && user?.lastName) return `${user.firstName} ${user.lastName}`;
+        if (user?.firstName) return user.firstName;
+        return "User";
+    };
+
+    const getSubscriptionDisplay = () => {
+        if (!subscription || !subscription.isActive) return "Free Plan";
+        return subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1) + " Plan";
+    };
+
     return (
         <>
             <SignedIn>
@@ -90,13 +131,13 @@ export function SidebarDemo() {
                                 </div>
                             </div>
 
-                            {/* User section at bottom with Clerk UserButton */}
+                            {/* Enhanced User section at bottom */}
                             <div className="p-2">
-                                <div className="flex items-center justify-center p-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 transition-colors">
+                                <div className="flex items-center gap-3 p-3 rounded-lg bg-neutral-800 hover:bg-neutral-700 transition-colors cursor-pointer">
                                     <UserButton 
                                         appearance={{
                                             elements: {
-                                                avatarBox: "w-8 h-8",
+                                                avatarBox: "w-10 h-10",
                                                 userButtonPopoverCard: "bg-neutral-800 border-neutral-700",
                                                 userButtonPopoverActionButton: "text-white hover:bg-neutral-700",
                                                 userButtonPopoverActionButtonText: "text-white",
@@ -104,6 +145,14 @@ export function SidebarDemo() {
                                             }
                                         }}
                                     />
+                                    <div className={`flex-1 transition-opacity duration-200 ${open ? 'opacity-100' : 'opacity-0'}`}>
+                                        <div className="text-sm font-[semiBold] text-white truncate">
+                                            {getDisplayName()}
+                                        </div>
+                                        <div className="text-xs text-neutral-400 truncate">
+                                            {getSubscriptionDisplay()}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </SidebarBody>
