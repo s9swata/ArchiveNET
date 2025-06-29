@@ -133,25 +133,29 @@ export function SidebarDemo() {
                             {/* Enhanced User section at bottom */}
                             <div className="p-2">
                                 <div className="flex items-center gap-3 p-3 rounded-lg bg-neutral-800 hover:bg-neutral-700 transition-colors cursor-pointer">
-                                    <UserButton
-                                        appearance={{
-                                            elements: {
-                                                avatarBox: "w-10 h-10",
-                                                userButtonPopoverCard: "bg-neutral-800 border-neutral-700",
-                                                userButtonPopoverActionButton: "text-white hover:bg-neutral-700",
-                                                userButtonPopoverActionButtonText: "text-white",
-                                                userButtonPopoverFooter: "hidden"
-                                            }
-                                        }}
-                                    />
-                                    <div className={`flex-1 transition-opacity duration-200 ${open ? 'opacity-100' : 'opacity-0'}`}>
-                                        <div className="text-sm font-[semiBold] text-white truncate">
-                                            {getDisplayName()}
-                                        </div>
-                                        <div className="text-xs text-neutral-400 truncate">
-                                            {getSubscriptionDisplay()}
-                                        </div>
+                                    <div className="flex-shrink-0">
+                                        <UserButton
+                                            appearance={{
+                                                elements: {
+                                                    avatarBox: "w-10 h-10",
+                                                    userButtonPopoverCard: "bg-neutral-800 border-neutral-700",
+                                                    userButtonPopoverActionButton: "text-white hover:bg-neutral-700",
+                                                    userButtonPopoverActionButtonText: "text-white",
+                                                    userButtonPopoverFooter: "hidden"
+                                                }
+                                            }}
+                                        />
                                     </div>
+                                    {open && (
+                                        <div className="flex-1 min-w-0 transition-opacity duration-200">
+                                            <div className="text-sm font-[semiBold] text-white truncate">
+                                                {getDisplayName()}
+                                            </div>
+                                            <div className="text-xs text-neutral-400 truncate">
+                                                {getSubscriptionDisplay()}
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </SidebarBody>
