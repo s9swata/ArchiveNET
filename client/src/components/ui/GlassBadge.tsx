@@ -11,7 +11,7 @@ interface GlassBadgeProps {
 
 export const GlassBadge = ({ text, emoji, className = "", onClick }: GlassBadgeProps) => {
   // Memoize floating particles to prevent recreation
-  const floatingParticles = useMemo(() => 
+  const floatingParticles = useMemo(() =>
     Array.from({ length: 3 }, (_, i) => ({
       id: i,
       left: `${20 + i * 30}%`,
@@ -30,7 +30,7 @@ export const GlassBadge = ({ text, emoji, className = "", onClick }: GlassBadgeP
         ease: [0.16, 1, 0.3, 1],
         delay: 0.2
       }}
-      className={`relative inline-flex items-center gap-2 ${className}`}
+      className={`relative inline-flex items-center gap-2 cursor-pointer ${className}`}
     >
       {/* Main Glass Container */}
       <div className="relative group" onClick={onClick}>

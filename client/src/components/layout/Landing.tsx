@@ -21,7 +21,7 @@ export const Landing = () => {
                 <Image
                     src={background}
                     alt="Background"
-                    className="absolute inset-0 top-20 object-cover w-full h-full z-10 opacity-80"
+                    className="absolute inset-0 top-20 object-cover w-full h-full z-10 opacity-75"
                     priority
                 />
 
@@ -37,6 +37,7 @@ export const Landing = () => {
                     <GlassBadge
                         text="Get Universal Context Now!"
                         emoji="🚀"
+                        onClick={() => router.push('/get-started')}
                     />
                 </div>
 
@@ -48,7 +49,7 @@ export const Landing = () => {
                             ARCHIVENET
                         </h1>
                     </div>
-                    */}
+                    
 
                     {/* Hero Description */}
                     <div className="max-w-4xl mx-auto text-center space-y-4 sm:space-y-6">
