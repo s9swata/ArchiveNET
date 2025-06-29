@@ -1,5 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
+import { useMemo } from "react";
 
 interface GlassBadgeProps {
   text: string;
@@ -9,6 +10,17 @@ interface GlassBadgeProps {
 }
 
 export const GlassBadge = ({ text, emoji, className = "", onClick }: GlassBadgeProps) => {
+  // Memoize floating particles to prevent recreation
+  const floatingParticles = useMemo(() => 
+    Array.from({ length: 3 }, (_, i) => ({
+      id: i,
+      left: `${20 + i * 30}%`,
+      top: `${10 + i * 20}%`,
+      duration: 2 + i * 0.5,
+      delay: i * 0.3,
+    })), []
+  );
+
   return (
     <motion.div
       initial={{ opacity: 0, y: -20, scale: 0.9 }}
@@ -83,13 +95,13 @@ export const GlassBadge = ({ text, emoji, className = "", onClick }: GlassBadgeP
 
       {/* Floating Particles - Hidden on mobile for performance */}
       <div className="absolute inset-0 pointer-events-none hidden sm:block">
-        {[...Array(3)].map((_, i) => (
+        {floatingParticles.map((particle) => (
           <motion.div
-            key={i}
+            key={particle.id}
             className="absolute w-1 h-1 bg-blue-400/40 rounded-full"
             style={{
-              left: `${20 + i * 30}%`,
-              top: `${10 + i * 20}%`,
+              left: particle.left,
+              top: particle.top,
             }}
             animate={{
               y: [-10, -20, -10],
@@ -97,11 +109,11 @@ export const GlassBadge = ({ text, emoji, className = "", onClick }: GlassBadgeP
               scale: [0.5, 1, 0.5]
             }}
             transition={{
-              duration: 2 + i * 0.5,
+              duration: particle.duration,
               repeat: Infinity,
               repeatType: "reverse",
               ease: "easeInOut",
-              delay: i * 0.3
+              delay: particle.delay
             }}
           />
         ))}

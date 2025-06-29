@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
 interface Particle {
   id: number;
@@ -23,15 +23,15 @@ export const FloatingParticles = ({ count = 25, className = "", position = 'full
   const [particles, setParticles] = useState<Particle[]>([]);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
-  // Color palette for particles
-  const colors = [
+  // Color palette for particles - memoized to prevent recreation
+  const colors = useMemo(() => [
     "rgba(59, 130, 246, 0.4)",   // Blue
     "rgba(147, 197, 253, 0.3)",  // Light Blue
     "rgba(255, 255, 255, 0.2)",  // White
     "rgba(139, 92, 246, 0.3)",   // Purple
     "rgba(34, 197, 94, 0.3)",    // Green
     "rgba(251, 191, 36, 0.3)",   // Yellow
-  ];
+  ], []);
 
   useEffect(() => {
     // Set dimensions on mount and resize
@@ -82,7 +82,7 @@ export const FloatingParticles = ({ count = 25, className = "", position = 'full
     });
 
     setParticles(newParticles);
-  }, [count, dimensions, position, colors]);
+  }, [count, dimensions.width, dimensions.height, position, colors]);
 
   if (particles.length === 0) return null;
 
@@ -135,6 +135,67 @@ export const FloatingParticles = ({ count = 25, className = "", position = 'full
 
 // Specialized component for hero section with corner positioning
 export const HeroFloatingParticles = () => {
+  // Memoize static arrays to prevent recreation
+  const detailParticlesLeft = useMemo(() => Array.from({ length: 15 }, (_, i) => ({
+    id: `detail-left-${i}`,
+    left: `${Math.random() * 35}%`,
+    top: `${Math.random() * 40}%`,
+    duration: Math.random() * 6 + 4,
+    delay: Math.random() * 3,
+  })), []);
+
+  const detailParticlesRight = useMemo(() => Array.from({ length: 15 }, (_, i) => ({
+    id: `detail-right-${i}`,
+    left: `${65 + Math.random() * 35}%`,
+    top: `${Math.random() * 40}%`,
+    duration: Math.random() * 6 + 4,
+    delay: Math.random() * 3,
+  })), []);
+
+  const orbsLeft = useMemo(() => Array.from({ length: 6 }, (_, i) => ({
+    id: `orb-left-${i}`,
+    width: Math.random() * 25 + 15,
+    height: Math.random() * 25 + 15,
+    left: `${Math.random() * 30}%`,
+    top: `${Math.random() * 35}%`,
+    duration: Math.random() * 18 + 12,
+    delay: Math.random() * 4,
+  })), []);
+
+  const orbsRight = useMemo(() => Array.from({ length: 6 }, (_, i) => ({
+    id: `orb-right-${i}`,
+    width: Math.random() * 25 + 15,
+    height: Math.random() * 25 + 15,
+    left: `${70 + Math.random() * 30}%`,
+    top: `${Math.random() * 35}%`,
+    duration: Math.random() * 18 + 12,
+    delay: Math.random() * 4,
+  })), []);
+
+  const starsLeft = useMemo(() => Array.from({ length: 4 }, (_, i) => ({
+    id: `star-left-${i}`,
+    left: `${Math.random() * 20}%`,
+    top: `${Math.random() * 25}%`,
+    delay: Math.random() * 12 + 6,
+  })), []);
+
+  const starsRight = useMemo(() => Array.from({ length: 4 }, (_, i) => ({
+    id: `star-right-${i}`,
+    left: `${80 + Math.random() * 20}%`,
+    top: `${Math.random() * 25}%`,
+    delay: Math.random() * 12 + 6,
+  })), []);
+
+  const constellationLines = useMemo(() => Array.from({ length: 4 }, (_, i) => ({
+    id: `line-corner-${i}`,
+    x1: `${Math.random() * 25}%`,
+    y1: `${Math.random() * 30}%`,
+    x2: `${75 + Math.random() * 25}%`,
+    y2: `${Math.random() * 30}%`,
+    duration: Math.random() * 10 + 6,
+    delay: Math.random() * 8,
+  })), []);
+
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 100 }}>
       {/* Top Left Corner Particles */}
@@ -146,13 +207,13 @@ export const HeroFloatingParticles = () => {
       {/* Enhanced detail particles for corners */}
       <div className="absolute inset-0" style={{ zIndex: 100 }}>
         {/* Top Left Detail Particles */}
-        {[...Array(15)].map((_, i) => (
+        {detailParticlesLeft.map((particle) => (
           <motion.div
-            key={`detail-left-${i}`}
+            key={particle.id}
             className="absolute w-1 h-1 rounded-full"
             style={{
-              left: `${Math.random() * 35}%`, // Left 35% of screen
-              top: `${Math.random() * 40}%`, // Top 40% of screen
+              left: particle.left,
+              top: particle.top,
               backgroundColor: `rgba(255, 255, 255, ${Math.random() * 0.4 + 0.2})`,
               zIndex: 100,
             }}
@@ -163,22 +224,22 @@ export const HeroFloatingParticles = () => {
               scale: [0.5, 1.8, 0.5],
             }}
             transition={{
-              duration: Math.random() * 6 + 4,
+              duration: particle.duration,
               repeat: Infinity,
-              delay: Math.random() * 3,
+              delay: particle.delay,
               ease: "easeInOut",
             }}
           />
         ))}
 
         {/* Top Right Detail Particles */}
-        {[...Array(15)].map((_, i) => (
+        {detailParticlesRight.map((particle) => (
           <motion.div
-            key={`detail-right-${i}`}
+            key={particle.id}
             className="absolute w-1 h-1 rounded-full"
             style={{
-              left: `${65 + Math.random() * 35}%`, // Right 35% of screen
-              top: `${Math.random() * 40}%`, // Top 40% of screen
+              left: particle.left,
+              top: particle.top,
               backgroundColor: `rgba(255, 255, 255, ${Math.random() * 0.4 + 0.2})`,
               zIndex: 100,
             }}
@@ -189,9 +250,9 @@ export const HeroFloatingParticles = () => {
               scale: [0.5, 1.8, 0.5],
             }}
             transition={{
-              duration: Math.random() * 6 + 4,
+              duration: particle.duration,
               repeat: Infinity,
-              delay: Math.random() * 3,
+              delay: particle.delay,
               ease: "easeInOut",
             }}
           />
@@ -201,15 +262,15 @@ export const HeroFloatingParticles = () => {
       {/* Enhanced glowing orbs for corners */}
       <div className="absolute inset-0" style={{ zIndex: 100 }}>
         {/* Top Left Glowing Orbs */}
-        {[...Array(6)].map((_, i) => (
+        {orbsLeft.map((orb) => (
           <motion.div
-            key={`orb-left-${i}`}
+            key={orb.id}
             className="absolute rounded-full blur-sm"
             style={{
-              width: Math.random() * 25 + 15,
-              height: Math.random() * 25 + 15,
-              left: `${Math.random() * 30}%`, // Left 30% of screen
-              top: `${Math.random() * 35}%`, // Top 35% of screen
+              width: orb.width,
+              height: orb.height,
+              left: orb.left,
+              top: orb.top,
               backgroundColor: `rgba(59, 130, 246, ${Math.random() * 0.3 + 0.1})`,
               zIndex: 100,
             }}
@@ -220,24 +281,24 @@ export const HeroFloatingParticles = () => {
               opacity: [0.2, 0.5, 0.2],
             }}
             transition={{
-              duration: Math.random() * 18 + 12,
+              duration: orb.duration,
               repeat: Infinity,
-              delay: Math.random() * 4,
+              delay: orb.delay,
               ease: "easeInOut",
             }}
           />
         ))}
 
         {/* Top Right Glowing Orbs */}
-        {[...Array(6)].map((_, i) => (
+        {orbsRight.map((orb) => (
           <motion.div
-            key={`orb-right-${i}`}
+            key={orb.id}
             className="absolute rounded-full blur-sm"
             style={{
-              width: Math.random() * 25 + 15,
-              height: Math.random() * 25 + 15,
-              left: `${70 + Math.random() * 30}%`, // Right 30% of screen
-              top: `${Math.random() * 35}%`, // Top 35% of screen
+              width: orb.width,
+              height: orb.height,
+              left: orb.left,
+              top: orb.top,
               backgroundColor: `rgba(59, 130, 246, ${Math.random() * 0.3 + 0.1})`,
               zIndex: 100,
             }}
@@ -248,9 +309,9 @@ export const HeroFloatingParticles = () => {
               opacity: [0.2, 0.5, 0.2],
             }}
             transition={{
-              duration: Math.random() * 18 + 12,
+              duration: orb.duration,
               repeat: Infinity,
-              delay: Math.random() * 4,
+              delay: orb.delay,
               ease: "easeInOut",
             }}
           />
@@ -260,13 +321,13 @@ export const HeroFloatingParticles = () => {
       {/* Shooting stars from corners */}
       <div className="absolute inset-0" style={{ zIndex: 100 }}>
         {/* From Top Left */}
-        {[...Array(4)].map((_, i) => (
+        {starsLeft.map((star) => (
           <motion.div
-            key={`star-left-${i}`}
+            key={star.id}
             className="absolute w-1 h-1 bg-white rounded-full"
             style={{
-              left: `${Math.random() * 20}%`,
-              top: `${Math.random() * 25}%`,
+              left: star.left,
+              top: star.top,
               zIndex: 100,
             }}
             animate={{
@@ -278,20 +339,20 @@ export const HeroFloatingParticles = () => {
             transition={{
               duration: 2.5,
               repeat: Infinity,
-              delay: Math.random() * 12 + 6,
+              delay: star.delay,
               ease: "easeOut",
             }}
           />
         ))}
 
         {/* From Top Right */}
-        {[...Array(4)].map((_, i) => (
+        {starsRight.map((star) => (
           <motion.div
-            key={`star-right-${i}`}
+            key={star.id}
             className="absolute w-1 h-1 bg-white rounded-full"
             style={{
-              left: `${80 + Math.random() * 20}%`,
-              top: `${Math.random() * 25}%`,
+              left: star.left,
+              top: star.top,
               zIndex: 100,
             }}
             animate={{
@@ -303,7 +364,7 @@ export const HeroFloatingParticles = () => {
             transition={{
               duration: 2.5,
               repeat: Infinity,
-              delay: Math.random() * 12 + 6,
+              delay: star.delay,
               ease: "easeOut",
             }}
           />
@@ -312,13 +373,13 @@ export const HeroFloatingParticles = () => {
 
       {/* Constellation lines connecting corners */}
       <svg className="absolute inset-0 w-full h-full" style={{ zIndex: 100 }}>
-        {[...Array(4)].map((_, i) => (
+        {constellationLines.map((line) => (
           <motion.line
-            key={`line-corner-${i}`}
-            x1={`${Math.random() * 25}%`}
-            y1={`${Math.random() * 30}%`}
-            x2={`${75 + Math.random() * 25}%`}
-            y2={`${Math.random() * 30}%`}
+            key={line.id}
+            x1={line.x1}
+            y1={line.y1}
+            x2={line.x2}
+            y2={line.y2}
             stroke="rgba(255, 255, 255, 0.15)"
             strokeWidth="0.8"
             initial={{ pathLength: 0, opacity: 0 }}
@@ -327,9 +388,9 @@ export const HeroFloatingParticles = () => {
               opacity: [0, 0.4, 0] 
             }}
             transition={{
-              duration: Math.random() * 10 + 6,
+              duration: line.duration,
               repeat: Infinity,
-              delay: Math.random() * 8,
+              delay: line.delay,
               ease: "easeInOut",
             }}
           />
