@@ -62,22 +62,6 @@ export const Landing = () => {
                         </p>
                     </div>
                 </div>
-
-                {/* Feature Cards - Bottom positioning for larger screens */}
-                <div className="hidden lg:flex absolute bottom-10 right-4 xl:right-10 space-x-4 max-w-2xl z-20">
-                    <div className="flex-1 bg-black/30 backdrop-blur-md rounded-lg p-4 border border-white/10">
-                        <h3 className="text-lg xl:text-xl font-[Black] text-white mb-2">On-Chain Vector Engine</h3>
-                        <p className="text-xs xl:text-sm font-[semiBold] text-white/80">
-                            Enables secure, decentralized storage and retrieval of vector embeddings directly on the blockchain for trustless AI computation.
-                        </p>
-                    </div>
-                    <div className="flex-1 bg-black/30 backdrop-blur-md rounded-lg p-4 border border-white/10">
-                        <h3 className="text-lg xl:text-xl font-[Black] text-white mb-2">Universal Memory Context</h3>
-                        <p className="text-xs xl:text-sm font-[semiBold] text-white/80">
-                            Persistent, cross-agent memory for LLMs—ensuring continuity, personalization, and shared understanding across interactions.
-                        </p>
-                    </div>
-                </div>
             </div>
 
             {/* Marquee Section */}
