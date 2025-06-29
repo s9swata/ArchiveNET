@@ -33,7 +33,7 @@ export default function SuccessPage() {
             if (deployedContract) {
                 console.log("Contract deployed successfully:", deployedContract);
                 const key = deployedContract.data.contractHashFingerprint;
-                const contractId = deployedContract.data.contractTxId;
+                const contractId = deployedContract.data.contractId;
                 setInstanceKey(key);
                 setContractId(contractId);
                 setIsInstanceKeyCreated(true);

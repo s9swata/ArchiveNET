@@ -21,7 +21,7 @@ export async function getUserSubscription(token: string) {
 }
 
 export async function deployArweaveContract(token: string){
-  const response = await axios.post(`${API_BASE_URL}/deploy/contract`, {}, {
+  const response = await axios.post(`${API_BASE_URL}/deploy`, {}, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
