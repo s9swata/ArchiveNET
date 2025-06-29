@@ -11,6 +11,7 @@ import { Footer } from "./Footer";
 import { useRouter } from "next/navigation";
 import { WhyChooseArchiveNet } from "./WhyChoose";
 import { GlassBadge } from "../ui/GlassBadge";
+import { HeroFloatingParticles } from "../ui/FloatingParticles";
 
 // #TODO: Make this mobile responsive
 
@@ -18,8 +19,12 @@ export const Landing = () => {
     const router = useRouter();
     return (
         <>
-            <div className="w-full bg-black h-screen">
+            <div className="w-full bg-black h-screen relative overflow-hidden">
                 <Image src={background} alt="Background" className="absolute inset-0 object-cover w-full h-full z-10 opacity-80" />
+                
+                {/* Floating Particles */}
+                <HeroFloatingParticles />
+                
                 <NavBar />
                 
                 {/* Glass Badge */}
