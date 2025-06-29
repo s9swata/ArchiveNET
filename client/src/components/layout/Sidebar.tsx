@@ -131,8 +131,8 @@ export function SidebarDemo() {
                             </div>
 
                             {/* Enhanced User section at bottom */}
-                            <div className="p-2">
-                                <div className="flex items-center gap-3 p-3 rounded-lg bg-neutral-800 hover:bg-neutral-700 transition-colors cursor-pointer">
+                            <div className="">
+                                <div className="flex items-center gap-3 rounded-lg bg-neutral-800 hover:bg-neutral-700 hover:p-3 transition-colors cursor-pointer">
                                     <UserButton
                                         appearance={{
                                             elements: {
