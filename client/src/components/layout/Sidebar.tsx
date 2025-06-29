@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from "../ui/sidebar";
-import { SignedIn, SignedOut, RedirectToSignIn, useAuth } from "@clerk/nextjs";
+import { SignedIn, SignedOut, RedirectToSignIn, useAuth, UserButton } from "@clerk/nextjs";
 import {
     IconArrowLeft,
     IconBrandTabler,
@@ -90,16 +90,20 @@ export function SidebarDemo() {
                                 </div>
                             </div>
 
-                            {/* User section at bottom */}
+                            {/* User section at bottom with Clerk UserButton */}
                             <div className="p-2">
-                                <div className="flex items-center gap-3 p-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 transition-colors cursor-pointer">
-                                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                                        <IconUserBolt className="w-4 h-4 text-white" />
-                                    </div>
-                                    <div className="flex-1">
-                                        <div className="text-sm font-[semiBold] text-white">User</div>
-                                        <div className="text-xs text-neutral-400">Signed in</div>
-                                    </div>
+                                <div className="flex items-center justify-center p-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 transition-colors">
+                                    <UserButton 
+                                        appearance={{
+                                            elements: {
+                                                avatarBox: "w-8 h-8",
+                                                userButtonPopoverCard: "bg-neutral-800 border-neutral-700",
+                                                userButtonPopoverActionButton: "text-white hover:bg-neutral-700",
+                                                userButtonPopoverActionButtonText: "text-white",
+                                                userButtonPopoverFooter: "hidden"
+                                            }
+                                        }}
+                                    />
                                 </div>
                             </div>
                         </SidebarBody>
