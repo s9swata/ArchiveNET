@@ -9,6 +9,7 @@ import { Subscriptions } from "./Subscriptions";
 import { HeroButton } from "../ui/HeroButton";
 import { Footer } from "./Footer";
 import { useRouter } from "next/navigation";
+import { WhyChooseArchiveNet } from "./WhyChoose";
 
 // #TODO: Make this mobile responsive
 
@@ -46,26 +47,30 @@ export const Landing = () => {
             <div className="bg-black pt-10 sm:pt-15 md:pt-20 px-4 sm:px-6 md:px-10 flex justify-center items-center overflow-x-hidden">
                 <Marquee />
             </div>
-            
+            {/* Why Choose ArchiveNet Section */}
+            <section id="why-choose" className="">
+                <WhyChooseArchiveNet />
+            </section>
+
             {/* Features Section - BentoGrid */}
             <section id="features" className="my-5 sm:my-7 md:my-10 dark">
                 <BentoGridDemo />
             </section>
-            
+
             <div className='w-full bg-black'>
                 <Paragraph value={"Take the first :smirk_cat: step towards secure :smile:, universal memory for agentic models :sunglasses: , unlock shared context and scalable :brain: intelligence"} style={"w-full px-4 sm:px-10 md:px-20 lg:px-30 pt-10 sm:pt-15 md:pt-20 text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-[semiBold] text-[#dfdcff] text-center"}>
                 </Paragraph>
             </div>
-            
+
             {/* Pricing Section */}
             <section id="pricing" className="my-10 sm:my-15 md:my-20">
                 <Subscriptions />
             </section>
-            
+
             <div className="dark">
                 <HeroButton onClick={() => router.push('/get-started')} />
             </div>
-            
+
             {/* Footer Section */}
             <section id="contact">
                 <Footer />
