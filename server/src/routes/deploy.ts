@@ -5,7 +5,7 @@ import { errorResponse, successResponse } from "../utils/responses.js";
 
 const router = Router();
 
-//router.use(auth); // Apply auth middleware to all routes
+router.use(auth); // Apply auth middleware to all routes
 
 /**
  * POST /deploy/
