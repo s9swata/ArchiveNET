@@ -42,22 +42,20 @@ export async function hitPaymentWebhook(token: string, txHash: string, subscript
   });
 }
 
-export async function createNewApiKey (token: string){
-  const response = await axios.post(`${API_BASE_URL}/instances/create`, {}
-  , {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-  console.log(response.data);
-  return response.data;
-}
-
 export async function getInstances(token: string) {
   const response = await axios.get(`${API_BASE_URL}/instances`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   })
+  return response.data;
+}
+
+export async function createInstance(token: string) {
+  const response = await axios.post(`${API_BASE_URL}/instances/create`, {}, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return response.data;
 }
