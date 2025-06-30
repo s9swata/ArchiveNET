@@ -135,14 +135,14 @@ export function SidebarDemo() {
     };
 
     // Placeholder setup instructions - you can edit this later
-    const setupInstructions = `# Install ArchiveNET CLI
-npm install -g @archivenet/cli
+    const setupInstructions = `# Clone the repository
+git clone https://github.com/s9swata/archivenet.git && cd mcp
 
-# Initialize your instance
-archivenet init --instance-id <your-instance-id>
+# Install mcp
+npm install
 
-# Configure your API key
-archivenet config set api-key <your-api-key>
+# Configure ENDPOINTS
+npm run edit-env 
 
 # Start using ArchiveNET
 archivenet connect`;
