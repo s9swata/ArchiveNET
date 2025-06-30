@@ -512,7 +512,7 @@ export const OnboardingFlow = ({
                         {step.id === 2 && hasSubscription && !hasInstance && !deploymentData && !isCreatingInstance && (
                           <div className="bg-green-900/20 border border-green-500/30 rounded-lg p-4">
                             <p className="text-green-300 text-sm">
-                              ✅ <strong>Ready to proceed:</strong> You have an active subscription. Click "Create Instance" to deploy your contract.
+                              ✅ <strong>Ready to proceed:</strong> You have an active subscription. Click &quot;Create Instance&quot; to deploy your contract.
                             </p>
                           </div>
                         )}

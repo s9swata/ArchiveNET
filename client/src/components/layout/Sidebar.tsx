@@ -140,7 +140,7 @@ export function SidebarDemo() {
         setExpandedInstance(expandedInstance === instanceId ? null : instanceId);
     };
     //@@ts-ignore - ignore this step variable as it is not used
-    const handleStepComplete = (_step: number) => {
+    const handleStepComplete = () => {
         // Currently not implemented - placeholder for future functionality
         console.log("Step completion handler called");
     };
@@ -258,10 +258,7 @@ npm run setup cursor   # For Cursor IDE
                                                 <div className="flex items-center gap-2 mt-1">
                                                     <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                                                     <span className="text-xs text-green-400">Online</span>
-                                                    <span className="text-xs text-neutral-500">•</span>
-                                                    <span className="text-xs text-neutral-400">
-                                                        Created {instance.createdAt ? new Date(instance.createdAt).toLocaleDateString() : 'Unknown'}
-                                                    </span>
+
                                                 </div>
                                             </div>
                                             <div className="flex items-center gap-4">
