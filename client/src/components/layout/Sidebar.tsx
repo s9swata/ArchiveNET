@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Sidebar, SidebarBody, SidebarLink } from "../ui/sidebar";
+import { Sidebar, SidebarBody } from "../ui/sidebar";
 import { SignedIn, SignedOut, RedirectToSignIn, useAuth, UserButton, useUser } from "@clerk/nextjs";
 import {
     IconBrandTabler,
@@ -9,7 +9,7 @@ import {
     IconChevronUp,
 } from "@tabler/icons-react";
 import { getInstances, getUserSubscription } from "@/lib/api";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { CodeBlock } from "@/components/ui/code-block";
 import { SubscriptionManagement } from "./SubscriptionManagement";
 import { OnboardingFlow } from "./OnboardingFlow";
@@ -140,13 +140,9 @@ export function SidebarDemo() {
         setExpandedInstance(expandedInstance === instanceId ? null : instanceId);
     };
 
-    const handleStepComplete = (step: number) => {
-        if (step === 2) {
-            // Handle instance creation
-            console.log("Creating instance...");
-            // This would trigger the instance creation API call
-            // After successful creation, refresh the instances
-        }
+    const handleStepComplete = (_step: number) => {
+        // Currently not implemented - placeholder for future functionality
+        console.log("Step completion handler called");
     };
 
     const getCurrentOnboardingStep = () => {
@@ -301,10 +297,9 @@ npm run setup cursor   # For Cursor IDE
                                                             language="bash"
                                                             filename="setup-instructions.sh"
                                                         />
-                                                        <div className="mt-3 p-3 bg-blue-900/20 border border-blue-500/30 rounded-lg">
-                                                            <p className="text-blue-300 text-sm">
-                                                                💡 <strong>Tip:</strong> Make sure to replace <code className="bg-blue-800/30 px-1 rounded">your-instance-id</code> and <code className="bg-blue-800/30 px-1 rounded">your-api-key</code> with your actual values.
-                                                            </p>
+                                                        <div className="mt-3 p-3 bg-blue-900/20 border border-blue-500/30 rounded-lg">                                            <p className="text-blue-300 text-sm">
+                                                            💡 <strong>Tip:</strong> Make sure to replace <code className="bg-blue-800/30 px-1 rounded">your-instance-id</code> and <code className="bg-blue-800/30 px-1 rounded">your-api-key</code> with your actual values.
+                                                        </p>
                                                         </div>
                                                     </div>
                                                 </div>

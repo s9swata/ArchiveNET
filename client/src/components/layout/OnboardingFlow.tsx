@@ -7,11 +7,11 @@ import { Badge } from "@/components/ui/badge";
 import { CodeBlock } from "@/components/ui/code-block";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
-import { 
-  IconCheck, 
-  IconChevronRight, 
-  IconCreditCard, 
-  IconServer, 
+import {
+  IconCheck,
+  IconChevronRight,
+  IconCreditCard,
+  IconServer,
   IconTerminal,
   IconRocket,
   IconCopy
@@ -47,18 +47,17 @@ archivenet-setup-mcp cursor    # For Cursor IDE
 # Start using ArchiveNET
 # Your MCP server is now ready!`;
 
-export const OnboardingFlow = ({ 
-  currentStep, 
-  hasSubscription, 
-  hasInstance, 
-  onStepComplete,
+export const OnboardingFlow = ({
+  currentStep,
+  hasSubscription,
+  hasInstance,
   onNavigateToSubscription,
   refreshSubscriptionData
 }: OnboardingFlowProps) => {
   const router = useRouter();
   const { getToken } = useAuth();
   const [expandedStep, setExpandedStep] = useState<number | null>(currentStep);
-  
+
   // Subscription polling state
   const [isPollingSubscription, setIsPollingSubscription] = useState(false);
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -91,7 +90,7 @@ export const OnboardingFlow = ({
   const createInstanceAndDeploy = useCallback(async () => {
     setIsCreatingInstance(true);
     setDeploymentError(null);
-    
+
     try {
       const token = await getToken();
       if (!token) {
@@ -99,7 +98,7 @@ export const OnboardingFlow = ({
       }
 
       console.log("Step 1: Creating instance...");
-      
+
       // Step 1: Create instance
       const instanceResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/instances/create`, {
         method: 'POST',
@@ -118,7 +117,7 @@ export const OnboardingFlow = ({
       console.log("✅ Instance created successfully:", instanceResult);
 
       console.log("Step 2: Deploying contract...");
-      
+
       // Step 2: Deploy contract
       const deployResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/deploy`, {
         method: 'POST',
@@ -260,7 +259,7 @@ export const OnboardingFlow = ({
         <p className="text-neutral-400 text-lg max-w-2xl mx-auto">
           Get started with ArchiveNET in just 3 simple steps. Set up your decentralized memory system and unlock the power of AI-driven context management.
         </p>
-        
+
         {/* Progress Bar */}
         <div className="max-w-md mx-auto">
           <div className="flex items-center justify-between text-sm text-neutral-400 mb-2">
@@ -299,7 +298,7 @@ export const OnboardingFlow = ({
                 ${isCompleted ? 'border-green-500 bg-green-500/5' : ''}
                 ${!canProceed ? 'opacity-50' : 'hover:border-neutral-600'}
               `}>
-                <CardHeader 
+                <CardHeader
                   className="pb-4"
                   onClick={() => canProceed && setExpandedStep(isExpanded ? null : step.id)}
                 >
@@ -308,10 +307,10 @@ export const OnboardingFlow = ({
                       {/* Step Number/Status */}
                       <div className={`
                         w-10 h-10 rounded-full flex items-center justify-center
-                        ${isCompleted 
-                          ? 'bg-green-500 text-white' 
-                          : isActive 
-                            ? 'bg-blue-500 text-white' 
+                        ${isCompleted
+                          ? 'bg-green-500 text-white'
+                          : isActive
+                            ? 'bg-blue-500 text-white'
                             : 'bg-neutral-700 text-neutral-400'
                         }
                       `}>
@@ -357,17 +356,16 @@ export const OnboardingFlow = ({
                           className="bg-blue-400 hover:bg-blue-500 text-white"
                           disabled={!canProceed || (step.id === 1 && isPollingSubscription) || (step.id === 2 && isCreatingInstance)}
                         >
-                          {(step.id === 1 && isPollingSubscription) ? "Processing..." : 
-                           (step.id === 2 && isCreatingInstance) ? "Creating..." : 
-                           step.buttonText}
+                          {(step.id === 1 && isPollingSubscription) ? "Processing..." :
+                            (step.id === 2 && isCreatingInstance) ? "Creating..." :
+                              step.buttonText}
                         </Button>
                       )}
-                      
+
                       {canProceed && (
-                        <IconChevronRight 
-                          className={`w-5 h-5 text-neutral-400 transition-transform duration-200 ${
-                            isExpanded ? 'rotate-90' : ''
-                          }`} 
+                        <IconChevronRight
+                          className={`w-5 h-5 text-neutral-400 transition-transform duration-200 ${isExpanded ? 'rotate-90' : ''
+                            }`}
                         />
                       )}
                     </div>
@@ -456,7 +454,7 @@ export const OnboardingFlow = ({
                                 <IconCheck className="w-6 h-6 text-green-400" />
                                 <h3 className="text-green-300 font-semibold text-lg">Contract Deployed Successfully! 🎉</h3>
                               </div>
-                              
+
                               <div className="space-y-3">
                                 <div>
                                   <p className="text-green-400 text-sm font-medium mb-2">Session Key (Contract Hash Fingerprint):</p>
@@ -527,13 +525,13 @@ export const OnboardingFlow = ({
                                 <IconTerminal className="w-4 h-4 text-blue-400" />
                                 Installation Commands
                               </h4>
-                              <CodeBlock 
+                              <CodeBlock
                                 code={setupInstructions}
                                 language="bash"
                                 filename="setup-archivenet.sh"
                               />
                             </div>
-                            
+
                             <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4">
                               <p className="text-blue-300 text-sm">
                                 💡 <strong>Tip:</strong> After installation, restart your AI tool (Claude Desktop or Cursor) to activate the ArchiveNET integration.
