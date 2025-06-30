@@ -61,59 +61,44 @@ export const OnboardingFlow = ({
   
   // Subscription polling state
   const [isPollingSubscription, setIsPollingSubscription] = useState(false);
-  const subscriptionPollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
-  const subscriptionPollingAttemptsRef = useRef(0);
-  const MAX_SUBSCRIPTION_POLLING_ATTEMPTS = 40; // 40 attempts * 3 seconds = 2 minutes
+  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const pollingAttemptsRef = useRef(0);
+  const MAX_POLLING_ATTEMPTS = 40; // 40 attempts * 3 seconds = 2 minutes
 
-  // Instance deployment polling state
-  const [isPollingDeployment, setIsPollingDeployment] = useState(false);
+  // Instance deployment state
+  const [isCreatingInstance, setIsCreatingInstance] = useState(false);
   const [deploymentData, setDeploymentData] = useState<DeploymentData | null>(null);
-  const deploymentPollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
-  const deploymentPollingAttemptsRef = useRef(0);
-  const MAX_DEPLOYMENT_POLLING_ATTEMPTS = 60; // 60 attempts * 5 seconds = 5 minutes
+  const [deploymentError, setDeploymentError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
-  // Subscription polling functions
-  const startSubscriptionPolling = useCallback(() => {
+  // Handle subscription polling
+  const startPolling = useCallback(() => {
     console.log("Starting subscription polling...");
     setIsPollingSubscription(true);
-    subscriptionPollingAttemptsRef.current = 0;
+    pollingAttemptsRef.current = 0;
   }, []);
 
-  const stopSubscriptionPolling = useCallback(() => {
+  const stopPolling = useCallback(() => {
     console.log("Stopping subscription polling...");
     setIsPollingSubscription(false);
-    if (subscriptionPollingIntervalRef.current) {
-      clearInterval(subscriptionPollingIntervalRef.current);
-      subscriptionPollingIntervalRef.current = null;
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+      pollingIntervalRef.current = null;
     }
   }, []);
 
-  // Instance deployment polling functions
-  const startDeploymentPolling = useCallback(() => {
-    console.log("Starting deployment polling...");
-    setIsPollingDeployment(true);
-    deploymentPollingAttemptsRef.current = 0;
-  }, []);
-
-  const stopDeploymentPolling = useCallback(() => {
-    console.log("Stopping deployment polling...");
-    setIsPollingDeployment(false);
-    if (deploymentPollingIntervalRef.current) {
-      clearInterval(deploymentPollingIntervalRef.current);
-      deploymentPollingIntervalRef.current = null;
-    }
-  }, []);
-
-  // Create instance and deploy contract
+  // Create instance and deploy contract sequentially
   const createInstanceAndDeploy = useCallback(async () => {
+    setIsCreatingInstance(true);
+    setDeploymentError(null);
+    
     try {
       const token = await getToken();
       if (!token) {
         throw new Error("Authentication token not available");
       }
 
-      console.log("Creating instance...");
+      console.log("Step 1: Creating instance...");
       
       // Step 1: Create instance
       const instanceResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/instances/create`, {
@@ -125,14 +110,16 @@ export const OnboardingFlow = ({
       });
 
       if (!instanceResponse.ok) {
-        throw new Error(`Failed to create instance: ${instanceResponse.statusText}`);
+        const errorData = await instanceResponse.json().catch(() => ({}));
+        throw new Error(errorData.message || `Failed to create instance: ${instanceResponse.statusText}`);
       }
 
       const instanceResult = await instanceResponse.json();
-      console.log("Instance created:", instanceResult);
+      console.log("✅ Instance created successfully:", instanceResult);
 
+      console.log("Step 2: Deploying contract...");
+      
       // Step 2: Deploy contract
-      console.log("Deploying contract...");
       const deployResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/deploy`, {
         method: 'POST',
         headers: {
@@ -142,110 +129,80 @@ export const OnboardingFlow = ({
       });
 
       if (!deployResponse.ok) {
-        throw new Error(`Failed to deploy contract: ${deployResponse.statusText}`);
+        const errorData = await deployResponse.json().catch(() => ({}));
+        throw new Error(errorData.message || `Failed to deploy contract: ${deployResponse.statusText}`);
       }
 
       const deployResult = await deployResponse.json();
-      console.log("Contract deployed:", deployResult);
+      console.log("✅ Contract deployed successfully:", deployResult);
 
       if (deployResult.success && deployResult.data) {
         setDeploymentData(deployResult.data);
-        stopDeploymentPolling();
-        return true;
+        console.log("🎉 Deployment completed successfully!");
+      } else {
+        throw new Error(deployResult.message || "Deployment failed");
       }
 
-      return false;
     } catch (error) {
-      console.error("Error in createInstanceAndDeploy:", error);
-      return false;
+      console.error("❌ Error in createInstanceAndDeploy:", error);
+      setDeploymentError(error instanceof Error ? error.message : "Unknown error occurred");
+    } finally {
+      setIsCreatingInstance(false);
     }
-  }, [getToken, stopDeploymentPolling]);
+  }, [getToken]);
 
-  // Subscription polling effect
+  // Polling effect
   useEffect(() => {
     if (isPollingSubscription && refreshSubscriptionData) {
+      // Check if subscription is already active
       if (hasSubscription) {
         console.log("Subscription is active, stopping polling");
-        stopSubscriptionPolling();
+        stopPolling();
         return;
       }
 
-      subscriptionPollingIntervalRef.current = setInterval(async () => {
-        subscriptionPollingAttemptsRef.current += 1;
-        console.log(`Subscription polling attempt ${subscriptionPollingAttemptsRef.current}/${MAX_SUBSCRIPTION_POLLING_ATTEMPTS}`);
+      // Start polling
+      pollingIntervalRef.current = setInterval(async () => {
+        pollingAttemptsRef.current += 1;
+        console.log(`Polling attempt ${pollingAttemptsRef.current}/${MAX_POLLING_ATTEMPTS}`);
 
         try {
           await refreshSubscriptionData();
         } catch (error) {
-          console.error("Error during subscription polling:", error);
+          console.error("Error during polling:", error);
         }
 
-        if (subscriptionPollingAttemptsRef.current >= MAX_SUBSCRIPTION_POLLING_ATTEMPTS) {
-          console.warn("Max subscription polling attempts reached, stopping polling");
-          stopSubscriptionPolling();
+        // Stop polling if max attempts reached
+        if (pollingAttemptsRef.current >= MAX_POLLING_ATTEMPTS) {
+          console.warn("Max polling attempts reached, stopping polling");
+          stopPolling();
         }
       }, 3000); // Poll every 3 seconds
 
     } else {
-      if (subscriptionPollingIntervalRef.current) {
-        clearInterval(subscriptionPollingIntervalRef.current);
-        subscriptionPollingIntervalRef.current = null;
+      // Clear polling interval if not polling
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+        pollingIntervalRef.current = null;
       }
     }
 
+    // Cleanup function
     return () => {
-      if (subscriptionPollingIntervalRef.current) {
-        clearInterval(subscriptionPollingIntervalRef.current);
-        subscriptionPollingIntervalRef.current = null;
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+        pollingIntervalRef.current = null;
       }
     };
-  }, [isPollingSubscription, hasSubscription, refreshSubscriptionData, stopSubscriptionPolling]);
+  }, [isPollingSubscription, hasSubscription, refreshSubscriptionData, stopPolling]);
 
-  // Deployment polling effect
-  useEffect(() => {
-    if (isPollingDeployment) {
-      if (deploymentData) {
-        console.log("Deployment completed, stopping polling");
-        stopDeploymentPolling();
-        return;
-      }
-
-      deploymentPollingIntervalRef.current = setInterval(async () => {
-        deploymentPollingAttemptsRef.current += 1;
-        console.log(`Deployment polling attempt ${deploymentPollingAttemptsRef.current}/${MAX_DEPLOYMENT_POLLING_ATTEMPTS}`);
-
-        const success = await createInstanceAndDeploy();
-        
-        if (success || deploymentPollingAttemptsRef.current >= MAX_DEPLOYMENT_POLLING_ATTEMPTS) {
-          if (!success) {
-            console.warn("Max deployment polling attempts reached, stopping polling");
-          }
-          stopDeploymentPolling();
-        }
-      }, 5000); // Poll every 5 seconds for deployment
-
-    } else {
-      if (deploymentPollingIntervalRef.current) {
-        clearInterval(deploymentPollingIntervalRef.current);
-        deploymentPollingIntervalRef.current = null;
-      }
-    }
-
-    return () => {
-      if (deploymentPollingIntervalRef.current) {
-        clearInterval(deploymentPollingIntervalRef.current);
-        deploymentPollingIntervalRef.current = null;
-      }
-    };
-  }, [isPollingDeployment, deploymentData, createInstanceAndDeploy, stopDeploymentPolling]);
-
-  // Stop subscription polling when subscription becomes active
+  // Stop polling when subscription becomes active
   useEffect(() => {
     if (hasSubscription && isPollingSubscription) {
       console.log("Subscription detected as active, stopping polling");
-      stopSubscriptionPolling();
+      stopPolling();
     }
-  }, [hasSubscription, isPollingSubscription, stopSubscriptionPolling]);
+  }, [hasSubscription, isPollingSubscription, stopPolling]);
 
   const steps = [
     {
@@ -255,7 +212,7 @@ export const OnboardingFlow = ({
       icon: <IconCreditCard className="w-5 h-5" />,
       completed: hasSubscription,
       action: () => {
-        startSubscriptionPolling();
+        startPolling();
         if (onNavigateToSubscription) {
           onNavigateToSubscription();
         } else {
@@ -271,10 +228,7 @@ export const OnboardingFlow = ({
       description: "Deploy your personal ArchiveNET contract",
       icon: <IconServer className="w-5 h-5" />,
       completed: hasInstance || !!deploymentData,
-      action: () => {
-        startDeploymentPolling();
-        createInstanceAndDeploy();
-      },
+      action: createInstanceAndDeploy,
       buttonText: "Create Instance",
       details: "Deploy your own decentralized memory contract on the Arweave blockchain for secure data storage."
     },
@@ -324,7 +278,7 @@ export const OnboardingFlow = ({
         </div>
       </div>
 
-      {/* Subscription Polling Status Indicator */}
+      {/* Polling Status Indicator */}
       {isPollingSubscription && (
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -337,15 +291,15 @@ export const OnboardingFlow = ({
               <p className="text-blue-300 font-semibold">Checking Payment Status...</p>
               <p className="text-blue-400 text-sm">
                 We're monitoring your payment. This page will update automatically once your subscription is processed.
-                (Attempt {subscriptionPollingAttemptsRef.current}/{MAX_SUBSCRIPTION_POLLING_ATTEMPTS})
+                (Attempt {pollingAttemptsRef.current}/{MAX_POLLING_ATTEMPTS})
               </p>
             </div>
           </div>
         </motion.div>
       )}
 
-      {/* Deployment Polling Status Indicator */}
-      {isPollingDeployment && (
+      {/* Instance Creation Status */}
+      {isCreatingInstance && (
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -357,8 +311,31 @@ export const OnboardingFlow = ({
               <p className="text-green-300 font-semibold">Creating Instance & Deploying Contract...</p>
               <p className="text-green-400 text-sm">
                 Setting up your decentralized memory contract on Arweave blockchain. This may take a few minutes.
-                (Attempt {deploymentPollingAttemptsRef.current}/{MAX_DEPLOYMENT_POLLING_ATTEMPTS})
               </p>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Deployment Error */}
+      {deploymentError && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-6 p-4 bg-red-900/20 border border-red-500/30 rounded-lg"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-5 h-5 text-red-400">❌</div>
+            <div>
+              <p className="text-red-300 font-semibold">Deployment Failed</p>
+              <p className="text-red-400 text-sm">{deploymentError}</p>
+              <Button
+                onClick={createInstanceAndDeploy}
+                className="mt-2 bg-red-500 hover:bg-red-600 text-white text-sm"
+                disabled={isCreatingInstance}
+              >
+                Try Again
+              </Button>
             </div>
           </div>
         </motion.div>
@@ -374,7 +351,7 @@ export const OnboardingFlow = ({
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <IconCheck className="w-6 h-6 text-green-400" />
-              <h3 className="text-green-300 font-semibold text-lg">Contract Deployed Successfully!</h3>
+              <h3 className="text-green-300 font-semibold text-lg">Contract Deployed Successfully! 🎉</h3>
             </div>
             
             <div className="space-y-3">
@@ -507,10 +484,10 @@ export const OnboardingFlow = ({
                             step.action();
                           }}
                           className="bg-blue-400 hover:bg-blue-500 text-white"
-                          disabled={!canProceed || (step.id === 1 && isPollingSubscription) || (step.id === 2 && isPollingDeployment)}
+                          disabled={!canProceed || (step.id === 1 && isPollingSubscription) || (step.id === 2 && isCreatingInstance)}
                         >
                           {(step.id === 1 && isPollingSubscription) ? "Processing..." : 
-                           (step.id === 2 && isPollingDeployment) ? "Deploying..." : 
+                           (step.id === 2 && isCreatingInstance) ? "Creating..." : 
                            step.buttonText}
                         </Button>
                       )}
@@ -566,9 +543,26 @@ export const OnboardingFlow = ({
                                 <p className="text-green-300 text-sm">
                                   ✅ <strong>Your Session Key:</strong> Use this in your MCP configuration:
                                 </p>
-                                <code className="block mt-2 p-2 bg-green-900/30 rounded text-green-300 font-mono text-xs break-all">
-                                  {deploymentData.contractHashFingerprint}
-                                </code>
+                                <div className="flex items-center gap-3 bg-green-900/30 p-3 rounded-lg border border-green-500/20 mt-2">
+                                  <code className="flex-1 text-green-300 font-mono text-xs break-all">
+                                    {deploymentData.contractHashFingerprint}
+                                  </code>
+                                  <button
+                                    onClick={() => {
+                                      navigator.clipboard.writeText(deploymentData.contractHashFingerprint);
+                                      setCopied(true);
+                                      setTimeout(() => setCopied(false), 2000);
+                                    }}
+                                    className="text-green-400 hover:text-green-300 transition-colors p-1"
+                                    title="Copy session key"
+                                  >
+                                    {copied ? (
+                                      <span className="text-green-300 text-xs">Copied</span>
+                                    ) : (
+                                      <IconCopy size={14} />
+                                    )}
+                                  </button>
+                                </div>
                               </div>
                             )}
                           </div>
