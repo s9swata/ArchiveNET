@@ -241,7 +241,7 @@ archivenet connect`;
                                                         />
                                                         <div className="mt-3 p-3 bg-blue-900/20 border border-blue-500/30 rounded-lg">
                                                             <p className="text-blue-300 text-sm">
-                                                                💡 <strong>Tip:</strong> Make sure to replace <code className="bg-blue-800/30 px-1 rounded">&lt;your-instance-id&gt;</code> and <code className="bg-blue-800/30 px-1 rounded">&lt;your-api-key&gt;</code> with your actual values.
+                                                                💡 <strong>Tip:</strong> Make sure to replace <code className="bg-blue-800/30 px-1 rounded">&lt;your-instance-id&gt;</code> and <code className=\"bg-blue-800/30 px-1 rounded">&lt;your-api-key&gt;</code> with your actual values.
                                                             </p>
                                                         </div>
                                                     </div>
