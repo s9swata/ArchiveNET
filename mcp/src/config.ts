@@ -6,7 +6,8 @@ dotenv.config();
 
 // Define configuration schema
 const ConfigSchema = z.object({
-  baseApiUrl: z.string().url('BASE_API_URL must be a valid URL'),
+  insertEndpoint: z.string().url('INSERT_CONTEXT_ENDPOINT must be a valid URL'),
+  searchEndpoint: z.string().url('SEARCH_CONTEXT_ENDPOINT must be a valid URL'),
   token: z.string().optional(),
   apiTimeout: z.number().default(30000),
 });
@@ -15,7 +16,8 @@ const ConfigSchema = z.object({
 function loadConfig() {
   try {
     const config = ConfigSchema.parse({
-      baseApiUrl: process.env.BASE_API_URL,
+      insertEndpoint: process.env.INSERT_CONTEXT_ENDPOINT,
+      searchEndpoint: process.env.SEARCH_CONTEXT_ENDPOINT,
       token: process.env.TOKEN,
       apiTimeout: process.env.API_TIMEOUT ? parseInt(process.env.API_TIMEOUT) : 30000,
     });

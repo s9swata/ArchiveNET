@@ -184,7 +184,8 @@ git clone https://github.com/s9swata/archivenet.git && cd mcp
 npm install
 
 # Configure your environment
-npm run edit-env BASE_API_URL=https://archivenet-backend-917525606701.us-central1.run.app
+npm run edit-env INSERT_CONTEXT_ENDPOINT=https://archivenet-backend-917525606701.us-central1.run.app/memories/insert
+npm run edit-env SEARCH_CONTEXT_ENDPOINT=https://archivenet-backend-917525606701.us-central1.run.app/memories/search
 npm run edit-env TOKEN=<your-session-key>
 
 # Setup for your preferred LLM

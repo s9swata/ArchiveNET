@@ -10,8 +10,6 @@ import type {
 
 export class ContextAPIClient {
   private readonly headers: Record<string, string>;
-  private readonly insertEndpoint: string;
-  private readonly searchEndpoint: string;
 
   constructor() {
     this.headers = {
@@ -23,10 +21,6 @@ export class ContextAPIClient {
     if (config.token) {
       this.headers['Authorization'] = `Bearer ${config.token}`;
     }
-
-    // Construct endpoints from base URL
-    this.insertEndpoint = `${config.baseApiUrl}/memories/insert`;
-    this.searchEndpoint = `${config.baseApiUrl}/memories/search`;
   }
 
   async insertContext(request: InsertContextRequest): Promise<InsertContextResponse> {
@@ -46,7 +40,7 @@ export class ContextAPIClient {
         },
       };
 
-      const response = await fetch(this.insertEndpoint, {
+      const response = await fetch(config.insertEndpoint, {
         method: 'POST',
         headers: this.headers,
         body: JSON.stringify(requestBody),
@@ -108,7 +102,7 @@ export class ContextAPIClient {
       };
       */
 
-      const response = await fetch(this.searchEndpoint, {
+      const response = await fetch(config.searchEndpoint, {
         method: 'POST',
         headers: this.headers,
         body: JSON.stringify({

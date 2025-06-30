@@ -61,8 +61,6 @@ class MCPContextServer {
     await this.server.connect(transport);
     
     console.error('MCP Context Server started successfully');
-    console.error(`Insert endpoint: ${config.insertEndpoint}`);
-    console.error(`Search endpoint: ${config.searchEndpoint}`);
   }
 }
 

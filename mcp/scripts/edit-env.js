@@ -80,7 +80,8 @@ Options:
 Direct Updates:
   You can directly set environment variables using KEY=VALUE syntax:
   
-  edit-env BASE_API_URL=https://api.example.com
+  edit-env INSERT_CONTEXT_ENDPOINT=https://api.example.com/insert
+  edit-env SEARCH_CONTEXT_ENDPOINT=https://api.example.com/search
   edit-env TOKEN=your-bearer-token
   edit-env API_TIMEOUT=30000
 
@@ -88,13 +89,14 @@ Examples:
   edit-env --interactive                    # Interactive setup
   edit-env --show                          # Show current config
   edit-env --reset                         # Reset to defaults
-  edit-env BASE_API_URL=https://my-api.com
+  edit-env INSERT_CONTEXT_ENDPOINT=https://my-api.com/insert
   edit-env TOKEN=abc123 API_TIMEOUT=60000
 
 Environment Variables:
-  BASE_API_URL                   Base API URL for ArchiveNET (required)
-  TOKEN                          Bearer token for authentication (optional)
-  API_TIMEOUT                    Request timeout in milliseconds (default: 30000)
+  INSERT_CONTEXT_ENDPOINT    API endpoint for inserting context (required)
+  SEARCH_CONTEXT_ENDPOINT    API endpoint for searching context (required)
+  TOKEN                      Bearer token for authentication (optional)
+  API_TIMEOUT                Request timeout in milliseconds (default: 30000)
 `);
   }
 
@@ -109,7 +111,8 @@ Environment Variables:
       } else {
         // Create basic .env file
         const basicEnv = `# ArchiveNet API Configuration
-BASE_API_URL=https://your-api.com
+INSERT_CONTEXT_ENDPOINT=https://your-api.com/insert
+SEARCH_CONTEXT_ENDPOINT=https://your-api.com/search
 # Optional: Bearer token for authentication
 # TOKEN=your-bearer-token-here
 # Optional: Request timeout in milliseconds
@@ -162,7 +165,8 @@ API_TIMEOUT=30000
     
     // Define the order of variables
     const orderedKeys = [
-      'BASE_API_URL',
+      'INSERT_CONTEXT_ENDPOINT',
+      'SEARCH_CONTEXT_ENDPOINT',
       'TOKEN',
       'API_TIMEOUT'
     ];
@@ -227,20 +231,35 @@ API_TIMEOUT=30000
     
     console.log('Configure your API endpoints and settings:\n');
 
-    // Base API URL
-    let baseApiUrl;
+    // Insert endpoint
+    let insertEndpoint;
     do {
-      baseApiUrl = await this.prompt(
-        'Base API URL (required)',
-        envVars.BASE_API_URL
+      insertEndpoint = await this.prompt(
+        'Insert Context Endpoint (required)',
+        envVars.INSERT_CONTEXT_ENDPOINT
       );
-      if (!baseApiUrl) {
-        console.log('❌ Base API URL is required');
-      } else if (!this.isValidUrl(baseApiUrl)) {
+      if (!insertEndpoint) {
+        console.log('❌ Insert endpoint is required');
+      } else if (!this.isValidUrl(insertEndpoint)) {
         console.log('❌ Please enter a valid URL');
-        baseApiUrl = null;
+        insertEndpoint = null;
       }
-    } while (!baseApiUrl);
+    } while (!insertEndpoint);
+
+    // Search endpoint
+    let searchEndpoint;
+    do {
+      searchEndpoint = await this.prompt(
+        'Search Context Endpoint (required)',
+        envVars.SEARCH_CONTEXT_ENDPOINT
+      );
+      if (!searchEndpoint) {
+        console.log('❌ Search endpoint is required');
+      } else if (!this.isValidUrl(searchEndpoint)) {
+        console.log('❌ Please enter a valid URL');
+        searchEndpoint = null;
+      }
+    } while (!searchEndpoint);
 
     // Bearer Token (optional)
     const token = await this.prompt(
@@ -264,7 +283,8 @@ API_TIMEOUT=30000
 
     // Update environment variables
     const newEnvVars = {
-      BASE_API_URL: baseApiUrl,
+      INSERT_CONTEXT_ENDPOINT: insertEndpoint,
+      SEARCH_CONTEXT_ENDPOINT: searchEndpoint,
       API_TIMEOUT: apiTimeout.toString()
     };
 
@@ -291,7 +311,8 @@ API_TIMEOUT=30000
     
     // Required variables
     console.log('Required Settings:');
-    console.log(`  BASE_API_URL: ${envVars.BASE_API_URL || '❌ Not set'}`);
+    console.log(`  INSERT_CONTEXT_ENDPOINT: ${envVars.INSERT_CONTEXT_ENDPOINT || '❌ Not set'}`);
+    console.log(`  SEARCH_CONTEXT_ENDPOINT: ${envVars.SEARCH_CONTEXT_ENDPOINT || '❌ Not set'}`);
     
     // Optional variables
     console.log('\nOptional Settings:');
@@ -300,15 +321,16 @@ API_TIMEOUT=30000
 
     // Validation
     console.log('\nValidation:');
-    const hasRequired = envVars.BASE_API_URL;
-    const validUrls = (!envVars.BASE_API_URL || this.isValidUrl(envVars.BASE_API_URL));
+    const hasRequired = envVars.INSERT_CONTEXT_ENDPOINT && envVars.SEARCH_CONTEXT_ENDPOINT;
+    const validUrls = (!envVars.INSERT_CONTEXT_ENDPOINT || this.isValidUrl(envVars.INSERT_CONTEXT_ENDPOINT)) &&
+                    (!envVars.SEARCH_CONTEXT_ENDPOINT || this.isValidUrl(envVars.SEARCH_CONTEXT_ENDPOINT));
     
     if (hasRequired && validUrls) {
       console.log('✅ Configuration is valid');
     } else {
       console.log('❌ Configuration needs attention:');
       if (!hasRequired) {
-        console.log('   - Missing required BASE_API_URL');
+        console.log('   - Missing required endpoints');
       }
       if (!validUrls) {
         console.log('   - Invalid URL format detected');
@@ -329,13 +351,14 @@ API_TIMEOUT=30000
 
     // Create new default file
     const defaultEnv = {
-      BASE_API_URL: 'https://your-api.com',
+      INSERT_CONTEXT_ENDPOINT: 'https://your-api.com/insert',
+      SEARCH_CONTEXT_ENDPOINT: 'https://your-api.com/search',
       API_TIMEOUT: '30000'
     };
 
     this.writeEnvFile(defaultEnv);
     console.log('✅ Reset .env file to default template');
-    console.log('💡 Please edit the BASE_API_URL with your actual API URL');
+    console.log('💡 Please edit the endpoints with your actual API URLs');
   }
 
   // Update specific environment variables
@@ -346,7 +369,7 @@ API_TIMEOUT=30000
     const { envVars, comments } = this.readEnvFile();
     
     // Validate updates
-    const validKeys = ['BASE_API_URL', 'TOKEN', 'API_TIMEOUT'];
+    const validKeys = ['INSERT_CONTEXT_ENDPOINT', 'SEARCH_CONTEXT_ENDPOINT', 'TOKEN', 'API_TIMEOUT'];
     const invalidKeys = Object.keys(updates).filter(key => !validKeys.includes(key));
     
     if (invalidKeys.length > 0) {
@@ -355,7 +378,7 @@ API_TIMEOUT=30000
     }
 
     // Validate URLs
-    ['BASE_API_URL'].forEach(key => {
+    ['INSERT_CONTEXT_ENDPOINT', 'SEARCH_CONTEXT_ENDPOINT'].forEach(key => {
       if (updates[key] && !this.isValidUrl(updates[key])) {
         console.error(`❌ Invalid URL for ${key}: ${updates[key]}`);
         process.exit(1);
