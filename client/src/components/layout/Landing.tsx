@@ -12,7 +12,6 @@ import { WhyChooseArchiveNet } from "./WhyChoose";
 import { GlassBadge } from "../ui/GlassBadge";
 import { HeroFloatingParticles } from "../ui/FloatingParticles";
 import { BoltBadge } from "../ui/BoltBadge";
-import { Bolt } from "lucide-react";
 
 export const Landing = () => {
     const router = useRouter();
