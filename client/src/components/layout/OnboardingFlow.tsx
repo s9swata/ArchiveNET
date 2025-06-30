@@ -278,135 +278,6 @@ export const OnboardingFlow = ({
         </div>
       </div>
 
-      {/* Polling Status Indicator */}
-      {isPollingSubscription && (
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-6 p-4 bg-blue-900/20 border border-blue-500/30 rounded-lg"
-        >
-          <div className="flex items-center gap-3">
-            <div className="animate-spin w-5 h-5 border-2 border-blue-400 border-t-transparent rounded-full"></div>
-            <div>
-              <p className="text-blue-300 font-semibold">Checking Payment Status...</p>
-              <p className="text-blue-400 text-sm">
-                We're monitoring your payment. This page will update automatically once your subscription is processed.
-                (Attempt {pollingAttemptsRef.current}/{MAX_POLLING_ATTEMPTS})
-              </p>
-            </div>
-          </div>
-        </motion.div>
-      )}
-
-      {/* Instance Creation Status */}
-      {isCreatingInstance && (
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-6 p-4 bg-green-900/20 border border-green-500/30 rounded-lg"
-        >
-          <div className="flex items-center gap-3">
-            <div className="animate-spin w-5 h-5 border-2 border-green-400 border-t-transparent rounded-full"></div>
-            <div>
-              <p className="text-green-300 font-semibold">Creating Instance & Deploying Contract...</p>
-              <p className="text-green-400 text-sm">
-                Setting up your decentralized memory contract on Arweave blockchain. This may take a few minutes.
-              </p>
-            </div>
-          </div>
-        </motion.div>
-      )}
-
-      {/* Deployment Error */}
-      {deploymentError && (
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-6 p-4 bg-red-900/20 border border-red-500/30 rounded-lg"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-5 h-5 text-red-400">❌</div>
-            <div>
-              <p className="text-red-300 font-semibold">Deployment Failed</p>
-              <p className="text-red-400 text-sm">{deploymentError}</p>
-              <Button
-                onClick={createInstanceAndDeploy}
-                className="mt-2 bg-red-500 hover:bg-red-600 text-white text-sm"
-                disabled={isCreatingInstance}
-              >
-                Try Again
-              </Button>
-            </div>
-          </div>
-        </motion.div>
-      )}
-
-      {/* Deployment Success Display */}
-      {deploymentData && (
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-6 p-6 bg-green-900/20 border border-green-500/30 rounded-lg"
-        >
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <IconCheck className="w-6 h-6 text-green-400" />
-              <h3 className="text-green-300 font-semibold text-lg">Contract Deployed Successfully! 🎉</h3>
-            </div>
-            
-            <div className="space-y-3">
-              <div>
-                <p className="text-green-400 text-sm font-medium mb-2">Session Key (Contract Hash Fingerprint):</p>
-                <div className="flex items-center gap-3 bg-green-900/30 p-3 rounded-lg border border-green-500/20">
-                  <code className="flex-1 text-green-300 font-mono text-sm break-all">
-                    {deploymentData.contractHashFingerprint}
-                  </code>
-                  <button
-                    onClick={() => {
-                      navigator.clipboard.writeText(deploymentData.contractHashFingerprint);
-                      setCopied(true);
-                      setTimeout(() => setCopied(false), 2000);
-                    }}
-                    className="text-green-400 hover:text-green-300 transition-colors p-1 flex items-center gap-1"
-                    title="Copy session key to clipboard"
-                  >
-                    {copied ? (
-                      <span className="text-green-300 text-sm font-medium">Copied</span>
-                    ) : (
-                      <IconCopy size={16} />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              <div>
-                <p className="text-green-400 text-sm font-medium mb-2">Contract ID:</p>
-                <div className="bg-green-900/30 p-3 rounded-lg border border-green-500/20">
-                  <code className="text-green-300 font-mono text-sm break-all">
-                    {deploymentData.contractId}
-                  </code>
-                </div>
-              </div>
-
-              <div>
-                <p className="text-green-400 text-sm font-medium mb-2">Deployed At:</p>
-                <div className="bg-green-900/30 p-3 rounded-lg border border-green-500/20">
-                  <code className="text-green-300 font-mono text-sm">
-                    {new Date(deploymentData.deployedAt).toLocaleString()}
-                  </code>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-4">
-              <p className="text-yellow-300 text-sm">
-                <strong>⚠️ Important:</strong> Save your Session Key securely. You'll need it to configure your MCP client in the next step.
-              </p>
-            </div>
-          </div>
-        </motion.div>
-      )}
-
       {/* Steps */}
       <div className="max-w-4xl mx-auto space-y-4">
         {steps.map((step, index) => {
@@ -517,7 +388,138 @@ export const OnboardingFlow = ({
                           {step.details}
                         </p>
 
-                        {/* Special content for Step 3 - Setup Instructions */}
+                        {/* Step 1 - Subscription Polling Status */}
+                        {step.id === 1 && isPollingSubscription && (
+                          <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4">
+                            <div className="flex items-center gap-3">
+                              <div className="animate-spin w-5 h-5 border-2 border-blue-400 border-t-transparent rounded-full"></div>
+                              <div>
+                                <p className="text-blue-300 font-semibold">Checking Payment Status...</p>
+                                <p className="text-blue-400 text-sm">
+                                  We're monitoring your payment. This will update automatically once your subscription is processed.
+                                  (Attempt {pollingAttemptsRef.current}/{MAX_POLLING_ATTEMPTS})
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Step 1 - Subscription Ready */}
+                        {step.id === 1 && !hasSubscription && !isPollingSubscription && (
+                          <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-4">
+                            <p className="text-yellow-300 text-sm">
+                              📋 <strong>Choose your plan:</strong> Select from Basic ($5), Pro ($15), or Enterprise ($50) plans to get started.
+                            </p>
+                          </div>
+                        )}
+
+                        {/* Step 2 - Instance Creation Status */}
+                        {step.id === 2 && isCreatingInstance && (
+                          <div className="bg-green-900/20 border border-green-500/30 rounded-lg p-4">
+                            <div className="flex items-center gap-3">
+                              <div className="animate-spin w-5 h-5 border-2 border-green-400 border-t-transparent rounded-full"></div>
+                              <div>
+                                <p className="text-green-300 font-semibold">Creating Instance & Deploying Contract...</p>
+                                <p className="text-green-400 text-sm">
+                                  Setting up your decentralized memory contract on Arweave blockchain. This may take a few minutes.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Step 2 - Deployment Error */}
+                        {step.id === 2 && deploymentError && (
+                          <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-5 h-5 text-red-400">❌</div>
+                              <div>
+                                <p className="text-red-300 font-semibold">Deployment Failed</p>
+                                <p className="text-red-400 text-sm">{deploymentError}</p>
+                                <Button
+                                  onClick={createInstanceAndDeploy}
+                                  className="mt-2 bg-red-500 hover:bg-red-600 text-white text-sm"
+                                  disabled={isCreatingInstance}
+                                >
+                                  Try Again
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Step 2 - Deployment Success */}
+                        {step.id === 2 && deploymentData && (
+                          <div className="bg-green-900/20 border border-green-500/30 rounded-lg p-6">
+                            <div className="space-y-4">
+                              <div className="flex items-center gap-3">
+                                <IconCheck className="w-6 h-6 text-green-400" />
+                                <h3 className="text-green-300 font-semibold text-lg">Contract Deployed Successfully! 🎉</h3>
+                              </div>
+                              
+                              <div className="space-y-3">
+                                <div>
+                                  <p className="text-green-400 text-sm font-medium mb-2">Session Key (Contract Hash Fingerprint):</p>
+                                  <div className="flex items-center gap-3 bg-green-900/30 p-3 rounded-lg border border-green-500/20">
+                                    <code className="flex-1 text-green-300 font-mono text-sm break-all">
+                                      {deploymentData.contractHashFingerprint}
+                                    </code>
+                                    <button
+                                      onClick={() => {
+                                        navigator.clipboard.writeText(deploymentData.contractHashFingerprint);
+                                        setCopied(true);
+                                        setTimeout(() => setCopied(false), 2000);
+                                      }}
+                                      className="text-green-400 hover:text-green-300 transition-colors p-1 flex items-center gap-1"
+                                      title="Copy session key to clipboard"
+                                    >
+                                      {copied ? (
+                                        <span className="text-green-300 text-sm font-medium">Copied</span>
+                                      ) : (
+                                        <IconCopy size={16} />
+                                      )}
+                                    </button>
+                                  </div>
+                                </div>
+
+                                <div>
+                                  <p className="text-green-400 text-sm font-medium mb-2">Contract ID:</p>
+                                  <div className="bg-green-900/30 p-3 rounded-lg border border-green-500/20">
+                                    <code className="text-green-300 font-mono text-sm break-all">
+                                      {deploymentData.contractId}
+                                    </code>
+                                  </div>
+                                </div>
+
+                                <div>
+                                  <p className="text-green-400 text-sm font-medium mb-2">Deployed At:</p>
+                                  <div className="bg-green-900/30 p-3 rounded-lg border border-green-500/20">
+                                    <code className="text-green-300 font-mono text-sm">
+                                      {new Date(deploymentData.deployedAt).toLocaleString()}
+                                    </code>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-4">
+                                <p className="text-yellow-300 text-sm">
+                                  <strong>⚠️ Important:</strong> Save your Session Key securely. You'll need it to configure your MCP client in the next step.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Step 2 - Ready to Deploy */}
+                        {step.id === 2 && hasSubscription && !hasInstance && !deploymentData && !isCreatingInstance && (
+                          <div className="bg-green-900/20 border border-green-500/30 rounded-lg p-4">
+                            <p className="text-green-300 text-sm">
+                              ✅ <strong>Ready to proceed:</strong> You have an active subscription. Click "Create Instance" to deploy your contract.
+                            </p>
+                          </div>
+                        )}
+
+                        {/* Step 3 - Setup Instructions */}
                         {step.id === 3 && (
                           <div className="space-y-4">
                             <div className="bg-neutral-800/50 rounded-lg p-4 border border-neutral-600">
@@ -565,24 +567,6 @@ export const OnboardingFlow = ({
                                 </div>
                               </div>
                             )}
-                          </div>
-                        )}
-
-                        {/* Special content for Step 2 - Instance Creation */}
-                        {step.id === 2 && hasSubscription && !hasInstance && !deploymentData && (
-                          <div className="bg-green-900/20 border border-green-500/30 rounded-lg p-4">
-                            <p className="text-green-300 text-sm">
-                              ✅ <strong>Ready to proceed:</strong> You have an active subscription. Click "Create Instance" to deploy your contract.
-                            </p>
-                          </div>
-                        )}
-
-                        {/* Special content for Step 1 - Subscription */}
-                        {step.id === 1 && !hasSubscription && (
-                          <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-4">
-                            <p className="text-yellow-300 text-sm">
-                              📋 <strong>Choose your plan:</strong> Select from Basic ($5), Pro ($15), or Enterprise ($50) plans to get started.
-                            </p>
                           </div>
                         )}
                       </div>
