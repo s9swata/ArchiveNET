@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "../db/db.js";
 import { subscriptionsTable } from "../db/schema/subscriptions.js";
+import { keysTable } from "../db/schema/keys.js";
 
 export interface QuotaCheckResult {
 	allowed: boolean;
@@ -133,5 +134,18 @@ export async function getUserSubscription(clerkId: string) {
 	} catch (error) {
 		console.error("Error fetching user subscription:", error);
 		return null;
+	}
+}
+
+export async function updateLastUdedAt(userId: string): Promise<void> {
+	try {
+		await db
+			.update(keysTable)
+			.set({
+				lastUsedAt: new Date(),
+			})
+			.where(eq(keysTable.clerkId, userId));
+	} catch (error) {
+		console.error("Error updating lastUsedAt:", error);
 	}
 }
