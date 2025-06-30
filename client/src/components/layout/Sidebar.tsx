@@ -262,7 +262,7 @@ archivenet-setup-mcp cursor    # For Cursor IDE
                                                         />
                                                         <div className="mt-3 p-3 bg-blue-900/20 border border-blue-500/30 rounded-lg">
                                                             <p className="text-blue-300 text-sm">
-                                                                💡 <strong>Tip:</strong> Make sure to replace <code className="bg-blue-800/30 px-1 rounded">&lt;your-instance-id&gt;</code> and <code className=\"bg-blue-800/30 px-1 rounded">&lt;your-api-key&gt;</code> with your actual values.
+                                                                💡 <strong>Tip:</strong> Make sure to replace <code className="bg-blue-800/30 px-1 rounded">&lt;your-instance-id&gt;</code> and <code className="bg-blue-800/30 px-1 rounded">&lt;your-api-key&gt;</code> with your actual values.
                                                             </p>
                                                         </div>
                                                     </div>
@@ -305,13 +305,11 @@ archivenet-setup-mcp cursor    # For Cursor IDE
                                         <div
                                             key={idx}
                                             onClick={link.disabled ? undefined : link.onClick}
-                                            className={`flex items-center justify-start gap-2 group/sidebar py-2 cursor-pointer ${
-                                                link.disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-neutral-700/50 rounded-lg px-2'
-                                            } ${
-                                                activeView === (link.label === 'Dashboard' ? 'dashboard' : 'subscription') 
-                                                    ? 'bg-neutral-700 rounded-lg px-2' 
+                                            className={`flex items-center justify-start gap-2 group/sidebar py-2 cursor-pointer ${link.disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-neutral-700/50 rounded-lg px-2'
+                                                } ${activeView === (link.label === 'Dashboard' ? 'dashboard' : 'subscription')
+                                                    ? 'bg-neutral-700 rounded-lg px-2'
                                                     : ''
-                                            }`}
+                                                }`}
                                         >
                                             {link.icon}
                                             <span className={`text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0 ${open ? 'opacity-100' : 'opacity-0'}`}>
