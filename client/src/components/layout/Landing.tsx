@@ -90,7 +90,7 @@ export const Landing = () => {
 
             {/* CTA Button */}
             <div className="dark px-4 sm:px-6 lg:px-8">
-                <HeroButton onClick={() => router.push('/get-started')} />
+                <HeroButton onClick={() => router.push('/dashboard')} />
             </div>
 
             {/* Footer Section */}

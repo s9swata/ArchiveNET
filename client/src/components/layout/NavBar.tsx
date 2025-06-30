@@ -35,11 +35,11 @@ export function NavBar() {
     // Smooth scroll function
     const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, link: string) => {
         e.preventDefault();
-        
+
         if (link.startsWith('#')) {
             const targetId = link.substring(1);
             const targetElement = document.getElementById(targetId);
-            
+
             if (targetElement) {
                 targetElement.scrollIntoView({
                     behavior: 'smooth',
@@ -47,7 +47,7 @@ export function NavBar() {
                 });
             }
         }
-        
+
         // Close mobile menu if open
         setIsMobileMenuOpen(false);
     };
@@ -58,13 +58,13 @@ export function NavBar() {
                 {/* Desktop Navigation */}
                 <NavBody>
                     <NavbarLogo />
-                    <NavItems 
-                        items={navItems} 
+                    <NavItems
+                        items={navItems}
                         className="font-[semiBold]"
                         onItemClick={(e, link) => handleNavClick(e, link)}
                     />
                     <div className="flex items-center gap-4">
-                        <NavbarButton variant="primary" onClick={() => router.push('/get-started')}>Get Started Today</NavbarButton>
+                        <NavbarButton variant="primary" onClick={() => router.push('/dashboard')}>Get Started Today</NavbarButton>
                     </div>
                 </NavBody>
 

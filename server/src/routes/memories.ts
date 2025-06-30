@@ -7,6 +7,7 @@ import { MemoryService } from "../services/MemoryService.js";
 import {
 	checkQuota,
 	incrementQuotaUsage,
+	updateLastUsedAt,
 } from "../services/SubscriptionService.js";
 import { errorResponse, successResponse } from "../utils/responses.js";
 
@@ -102,6 +103,7 @@ router.post(
 
 			// Create the memory
 			const result = await memoryService.createMemory(req.body);
+			await updateLastUsedAt(clerkId);
 
 			// Update quota usage after successful memory creation
 			const quotaUpdate = await incrementQuotaUsage(clerkId, 1);

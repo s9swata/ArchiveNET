@@ -181,15 +181,20 @@ export function SidebarDemo() {
     };
 
     // Setup instructions for the dashboard
-    const setupInstructions = `# Install ArchiveNET MCP globally
-npm install -g @s9swata/archivenet-mcp
+    const setupInstructions = `# Clone the repository
+git clone https://github.com/s9swata/archivenet.git && cd mcp
+
+# Install mcp
+npm install
 
 # Configure your environment
-archivenet-edit-env --interactive
+npm run edit-env INSERT_CONTEXT_ENDPOINT=
+npm run edit-env SEARCH_CONTEXT_ENDPOINT=
+npm run edit-env TOKEN=<your-session-key>
 
 # Setup for your preferred LLM
-archivenet-setup-mcp claude    # For Claude Desktop
-archivenet-setup-mcp cursor    # For Cursor IDE
+npm run setup claude    # For Claude Desktop
+npm run setup cursor   # For Cursor IDE
 
 # Start using ArchiveNET
 # Your MCP server is now ready!`;
