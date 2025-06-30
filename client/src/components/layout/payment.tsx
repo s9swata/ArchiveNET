@@ -97,7 +97,8 @@ export function Web3Payment() {
         }
 
         await hitPaymentWebhook(token, sendTxData, selectedPlan?.id || "", 1000);
-        router.push(`/payments/success?txHash=${sendTxData}`);
+        console.log("Payment webhook hit successfully");
+        router.push("/dashboard");
     };
 
     useEffect(() => {

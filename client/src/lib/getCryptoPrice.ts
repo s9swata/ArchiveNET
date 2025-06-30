@@ -1,63 +1,38 @@
 import axios from "axios";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+export const getEthPrice = async (): Promise<number | null> => {
+  if (!process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY) {
+    console.error("ETHERSCAN_API_KEY is not set in environment variables");
+    return null;
+  }
+  
+  try {
+    const response = await axios.get("https://api.etherscan.io/v2/api", {
+      params: {
+        chainid: 1,
+        module: "stats",
+        action: "ethprice",
+        apikey: process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY,
+      },
+    });
 
-export async function test(token: string) {
-  const response = await axios.get(`${API_BASE_URL}/test`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return response.data;
-}
-
-export async function getUserSubscription(token: string) {
-  const response = await axios.get(`${API_BASE_URL}/user_subscriptions/list`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return response.data;
-}
-
-export async function deployArweaveContract(token: string){
-  const response = await axios.post(`${API_BASE_URL}/deploy`, {}, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  console.log(response.data);
-  return response.data;
-}
-
-export async function hitPaymentWebhook(token: string, txHash: string, subscriptionPlan: string, quotaLimit: number ) {
-  await axios.post(`${API_BASE_URL}/webhook/payments/web3`,{
-      txHash,
-      subscriptionPlan,
-      quotaLimit
-    }, {
-    headers: {
-      Authorization: `Bearer ${token}`,
+    if (response.data.status === "1" && response.data.result) {
+      return parseFloat(response.data.result.ethusd);
     }
-  });
-}
+    
+    return null;
+  } catch (error) {
+    console.error("Error fetching ETH price:", error);
+    return null;
+  }
+};
 
-export async function createNewApiKey (token: string){
-  const response = await axios.post(`${API_BASE_URL}/instances/create`, {}
-  , {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-  console.log(response.data);
-  return response.data;
-}
+// Utility function to convert USD to ETH
+export const convertUsdToEth = (usdAmount: number, ethPrice: number): number => {
+  return usdAmount / ethPrice;
+};
 
-export async function getInstances(token: string) {
-  const response = await axios.get(`${API_BASE_URL}/instances/list`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-  return response.data;
-}
+// Utility function to format ETH amount
+export const formatEthAmount = (ethAmount: number): string => {
+  return ethAmount.toFixed(6);
+};
