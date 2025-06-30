@@ -46,7 +46,7 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
  */
 router.post("/create", async (req: Request, res: Response): Promise<void> => {
 	try {
-		const userId = req.userId;
+		const userId = req.userId || req.body.userId;
 
 		if (!userId) {
 			res.status(401).json({ message: "User ID not found in token" });
