@@ -146,6 +146,11 @@ export function SidebarDemo() {
         return 3;
     };
 
+    // Handle navigation from onboarding to subscription management
+    const handleNavigateToSubscription = () => {
+        setActiveView('subscription');
+    };
+
     // Setup instructions for the dashboard
     const setupInstructions = `# Install ArchiveNET MCP globally
 npm install -g @s9swata/archivenet-mcp
@@ -180,6 +185,7 @@ archivenet-setup-mcp cursor    # For Cursor IDE
                     hasSubscription={subscription?.isActive || false}
                     hasInstance={instances.length > 0}
                     onStepComplete={handleStepComplete}
+                    onNavigateToSubscription={handleNavigateToSubscription}
                 />
             );
         }
@@ -262,7 +268,7 @@ archivenet-setup-mcp cursor    # For Cursor IDE
                                                         />
                                                         <div className="mt-3 p-3 bg-blue-900/20 border border-blue-500/30 rounded-lg">
                                                             <p className="text-blue-300 text-sm">
-                                                                💡 <strong>Tip:</strong> Make sure to replace <code className="bg-blue-800/30 px-1 rounded">&lt;your-instance-id&gt;</code> and <code className="bg-blue-800/30 px-1 rounded">&lt;your-api-key&gt;</code> with your actual values.
+                                                                💡 <strong>Tip:</strong> Make sure to replace <code className="bg-blue-800/30 px-1 rounded"><your-instance-id></code> and <code className="bg-blue-800/30 px-1 rounded"><your-api-key></code> with your actual values.
                                                             </p>
                                                         </div>
                                                     </div>

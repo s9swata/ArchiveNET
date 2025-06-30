@@ -20,6 +20,7 @@ interface OnboardingFlowProps {
   hasSubscription: boolean;
   hasInstance: boolean;
   onStepComplete: (step: number) => void;
+  onNavigateToSubscription?: () => void; // New prop for navigation
 }
 
 const setupInstructions = `# Install ArchiveNET MCP globally
@@ -39,7 +40,8 @@ export const OnboardingFlow = ({
   currentStep, 
   hasSubscription, 
   hasInstance, 
-  onStepComplete 
+  onStepComplete,
+  onNavigateToSubscription
 }: OnboardingFlowProps) => {
   const router = useRouter();
   const [expandedStep, setExpandedStep] = useState<number | null>(currentStep);
@@ -51,7 +53,15 @@ export const OnboardingFlow = ({
       description: "Choose a subscription plan that fits your needs",
       icon: <IconCreditCard className="w-5 h-5" />,
       completed: hasSubscription,
-      action: () => router.push('/get-started'),
+      action: () => {
+        // Navigate to subscription management instead of external route
+        if (onNavigateToSubscription) {
+          onNavigateToSubscription();
+        } else {
+          // Fallback to external route if callback not provided
+          router.push('/get-started');
+        }
+      },
       buttonText: "Choose Plan",
       details: "Select from Basic, Pro, or Enterprise plans to unlock ArchiveNET's powerful memory management features."
     },
