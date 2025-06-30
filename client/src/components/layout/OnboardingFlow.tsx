@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,8 @@ interface OnboardingFlowProps {
   hasSubscription: boolean;
   hasInstance: boolean;
   onStepComplete: (step: number) => void;
-  onNavigateToSubscription?: () => void; // New prop for navigation
+  onNavigateToSubscription?: () => void;
+  refreshSubscriptionData?: () => Promise<void>;
 }
 
 const setupInstructions = `# Install ArchiveNET MCP globally
@@ -41,10 +42,86 @@ export const OnboardingFlow = ({
   hasSubscription, 
   hasInstance, 
   onStepComplete,
-  onNavigateToSubscription
+  onNavigateToSubscription,
+  refreshSubscriptionData
 }: OnboardingFlowProps) => {
   const router = useRouter();
   const [expandedStep, setExpandedStep] = useState<number | null>(currentStep);
+  
+  // Polling state
+  const [isPollingSubscription, setIsPollingSubscription] = useState(false);
+  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const pollingAttemptsRef = useRef(0);
+  const MAX_POLLING_ATTEMPTS = 40; // 40 attempts * 3 seconds = 2 minutes
+
+  // Handle subscription polling
+  const startPolling = useCallback(() => {
+    console.log("Starting subscription polling...");
+    setIsPollingSubscription(true);
+    pollingAttemptsRef.current = 0;
+  }, []);
+
+  const stopPolling = useCallback(() => {
+    console.log("Stopping subscription polling...");
+    setIsPollingSubscription(false);
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+      pollingIntervalRef.current = null;
+    }
+  }, []);
+
+  // Polling effect
+  useEffect(() => {
+    if (isPollingSubscription && refreshSubscriptionData) {
+      // Check if subscription is already active
+      if (hasSubscription) {
+        console.log("Subscription is active, stopping polling");
+        stopPolling();
+        return;
+      }
+
+      // Start polling
+      pollingIntervalRef.current = setInterval(async () => {
+        pollingAttemptsRef.current += 1;
+        console.log(`Polling attempt ${pollingAttemptsRef.current}/${MAX_POLLING_ATTEMPTS}`);
+
+        try {
+          await refreshSubscriptionData();
+        } catch (error) {
+          console.error("Error during polling:", error);
+        }
+
+        // Stop polling if max attempts reached
+        if (pollingAttemptsRef.current >= MAX_POLLING_ATTEMPTS) {
+          console.warn("Max polling attempts reached, stopping polling");
+          stopPolling();
+        }
+      }, 3000); // Poll every 3 seconds
+
+    } else {
+      // Clear polling interval if not polling
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+        pollingIntervalRef.current = null;
+      }
+    }
+
+    // Cleanup function
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+        pollingIntervalRef.current = null;
+      }
+    };
+  }, [isPollingSubscription, hasSubscription, refreshSubscriptionData, stopPolling]);
+
+  // Stop polling when subscription becomes active
+  useEffect(() => {
+    if (hasSubscription && isPollingSubscription) {
+      console.log("Subscription detected as active, stopping polling");
+      stopPolling();
+    }
+  }, [hasSubscription, isPollingSubscription, stopPolling]);
 
   const steps = [
     {
@@ -54,11 +131,12 @@ export const OnboardingFlow = ({
       icon: <IconCreditCard className="w-5 h-5" />,
       completed: hasSubscription,
       action: () => {
-        // Navigate to subscription management instead of external route
+        // Start polling when user clicks to choose plan
+        startPolling();
+        // Navigate to subscription management
         if (onNavigateToSubscription) {
           onNavigateToSubscription();
         } else {
-          // Fallback to external route if callback not provided
           router.push('/get-started');
         }
       },
@@ -120,6 +198,26 @@ export const OnboardingFlow = ({
           </div>
         </div>
       </div>
+
+      {/* Polling Status Indicator */}
+      {isPollingSubscription && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-6 p-4 bg-blue-900/20 border border-blue-500/30 rounded-lg"
+        >
+          <div className="flex items-center gap-3">
+            <div className="animate-spin w-5 h-5 border-2 border-blue-400 border-t-transparent rounded-full"></div>
+            <div>
+              <p className="text-blue-300 font-semibold">Checking Payment Status...</p>
+              <p className="text-blue-400 text-sm">
+                We're monitoring your payment. This page will update automatically once your subscription is processed.
+                (Attempt {pollingAttemptsRef.current}/{MAX_POLLING_ATTEMPTS})
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       {/* Steps */}
       <div className="max-w-4xl mx-auto space-y-4">

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from "../ui/sidebar";
 import { SignedIn, SignedOut, RedirectToSignIn, useAuth, UserButton, useUser } from "@clerk/nextjs";
 import {
@@ -36,32 +36,6 @@ export function SidebarDemo() {
     const [activeView, setActiveView] = useState<ViewType>('dashboard');
     const [expandedInstance, setExpandedInstance] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-    
-    // Polling state
-    const [isPollingSubscription, setIsPollingSubscription] = useState(false);
-    const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
-    const pollingAttemptsRef = useRef(0);
-    const MAX_POLLING_ATTEMPTS = 40; // 40 attempts * 3 seconds = 2 minutes
-
-    // Wrap fetchUserSubscription in useCallback to prevent unnecessary re-renders
-    const fetchUserSubscription = useCallback(async () => {
-        try {
-            const token = await getToken();
-            if (!token) return;
-
-            const subscriptionData = await getUserSubscription(token);
-            if (!subscriptionData || !subscriptionData.data) {
-                console.error("No subscription data found");
-                setSubscription({ plan: "Free", isActive: false });
-                return;
-            }
-            console.log("User Subscription:", subscriptionData.data);
-            setSubscription({ plan: subscriptionData.data.plan, isActive: subscriptionData.data.isActive });
-        } catch (error) {
-            console.error("Failed to fetch subscription:", error);
-            setSubscription({ plan: "Free", isActive: false });
-        }
-    }, [getToken]);
 
     useEffect(() => {
         const handleGetInstances = async () => {
@@ -75,6 +49,25 @@ export function SidebarDemo() {
             setInstances(instancesData.data);
         }
 
+        const fetchUserSubscription = async () => {
+            try {
+                const token = await getToken();
+                if (!token) return;
+
+                const subscriptionData = await getUserSubscription(token);
+                if (!subscriptionData || !subscriptionData.data) {
+                    console.error("No subscription data found");
+                    setSubscription({ plan: "Free", isActive: false });
+                    return;
+                }
+                console.log("User Subscription:", subscriptionData.data);
+                setSubscription({ plan: subscriptionData.data.plan, isActive: subscriptionData.data.isActive });
+            } catch (error) {
+                console.error("Failed to fetch subscription:", error);
+                setSubscription({ plan: "Free", isActive: false });
+            }
+        };
+
         const initializeData = async () => {
             setIsLoading(true);
             await handleGetInstances();
@@ -83,54 +76,7 @@ export function SidebarDemo() {
         };
 
         initializeData();
-    }, [getToken, fetchUserSubscription]);
-
-    // Polling logic useEffect
-    useEffect(() => {
-        if (isPollingSubscription) {
-            // Check if subscription is already active
-            if (subscription?.isActive) {
-                console.log("Subscription is active, stopping polling");
-                setIsPollingSubscription(false);
-                setActiveView('dashboard');
-                return;
-            }
-
-            // Start polling
-            console.log("Starting subscription polling...");
-            pollingIntervalRef.current = setInterval(async () => {
-                pollingAttemptsRef.current += 1;
-                console.log(`Polling attempt ${pollingAttemptsRef.current}/${MAX_POLLING_ATTEMPTS}`);
-
-                try {
-                    await fetchUserSubscription();
-                } catch (error) {
-                    console.error("Error during polling:", error);
-                }
-
-                // Stop polling if max attempts reached
-                if (pollingAttemptsRef.current >= MAX_POLLING_ATTEMPTS) {
-                    console.warn("Max polling attempts reached, stopping polling");
-                    setIsPollingSubscription(false);
-                }
-            }, 3000); // Poll every 3 seconds
-
-        } else {
-            // Clear polling interval if not polling
-            if (pollingIntervalRef.current) {
-                clearInterval(pollingIntervalRef.current);
-                pollingIntervalRef.current = null;
-            }
-        }
-
-        // Cleanup function
-        return () => {
-            if (pollingIntervalRef.current) {
-                clearInterval(pollingIntervalRef.current);
-                pollingIntervalRef.current = null;
-            }
-        };
-    }, [isPollingSubscription, subscription?.isActive, fetchUserSubscription]);
+    }, [getToken]);
 
     // Determine which view to show based on user status
     useEffect(() => {
@@ -138,11 +84,7 @@ export function SidebarDemo() {
             const hasActiveSubscription = subscription.isActive;
             const hasInstances = instances.length > 0;
 
-            if (hasActiveSubscription && hasInstances) {
-                // User has both subscription and instances - stop any polling
-                setIsPollingSubscription(false);
-                setActiveView('dashboard');
-            } else if (!hasActiveSubscription || !hasInstances) {
+            if (!hasActiveSubscription || !hasInstances) {
                 setActiveView('onboarding');
             } else {
                 setActiveView('dashboard');
@@ -215,10 +157,27 @@ export function SidebarDemo() {
 
     // Handle navigation from onboarding to subscription management
     const handleNavigateToSubscription = () => {
-        console.log("Navigating to subscription management and starting polling...");
         setActiveView('subscription');
-        setIsPollingSubscription(true);
-        pollingAttemptsRef.current = 0;
+    };
+
+    // Function to refresh subscription data (called by OnboardingFlow)
+    const refreshSubscriptionData = async () => {
+        try {
+            const token = await getToken();
+            if (!token) return;
+
+            const subscriptionData = await getUserSubscription(token);
+            if (!subscriptionData || !subscriptionData.data) {
+                console.error("No subscription data found");
+                setSubscription({ plan: "Free", isActive: false });
+                return;
+            }
+            console.log("User Subscription (refreshed):", subscriptionData.data);
+            setSubscription({ plan: subscriptionData.data.plan, isActive: subscriptionData.data.isActive });
+        } catch (error) {
+            console.error("Failed to refresh subscription:", error);
+            setSubscription({ plan: "Free", isActive: false });
+        }
     };
 
     // Setup instructions for the dashboard
@@ -245,26 +204,7 @@ archivenet-setup-mcp cursor    # For Cursor IDE
         }
 
         if (activeView === 'subscription') {
-            return (
-                <div>
-                    {/* Polling Status Indicator */}
-                    {isPollingSubscription && (
-                        <div className="mb-6 p-4 bg-blue-900/20 border border-blue-500/30 rounded-lg">
-                            <div className="flex items-center gap-3">
-                                <div className="animate-spin w-5 h-5 border-2 border-blue-400 border-t-transparent rounded-full"></div>
-                                <div>
-                                    <p className="text-blue-300 font-semibold">Checking Payment Status...</p>
-                                    <p className="text-blue-400 text-sm">
-                                        We're monitoring your payment. This page will update automatically once your subscription is processed.
-                                        (Attempt {pollingAttemptsRef.current}/{MAX_POLLING_ATTEMPTS})
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                    <SubscriptionManagement currentPlan={subscription?.plan} />
-                </div>
-            );
+            return <SubscriptionManagement currentPlan={subscription?.plan} />;
         }
 
         if (activeView === 'onboarding') {
@@ -275,6 +215,7 @@ archivenet-setup-mcp cursor    # For Cursor IDE
                     hasInstance={instances.length > 0}
                     onStepComplete={handleStepComplete}
                     onNavigateToSubscription={handleNavigateToSubscription}
+                    refreshSubscriptionData={refreshSubscriptionData}
                 />
             );
         }
@@ -357,7 +298,7 @@ archivenet-setup-mcp cursor    # For Cursor IDE
                                                         />
                                                         <div className="mt-3 p-3 bg-blue-900/20 border border-blue-500/30 rounded-lg">
                                                             <p className="text-blue-300 text-sm">
-                                                                💡 <strong>Tip:</strong> Make sure to replace <code className="bg-blue-800/30 px-1 rounded">your-instance-id</code> and <code className=\"bg-blue-800/30 px-1 rounded">your-api-key</code> with your actual values.
+                                                                💡 <strong>Tip:</strong> Make sure to replace <code className="bg-blue-800/30 px-1 rounded">your-instance-id</code> and <code className="bg-blue-800/30 px-1 rounded">your-api-key</code> with your actual values.
                                                             </p>
                                                         </div>
                                                     </div>
@@ -421,20 +362,6 @@ archivenet-setup-mcp cursor    # For Cursor IDE
                                             <p className="text-yellow-300 text-xs">
                                                 ⚠️ Complete onboarding to access all features
                                             </p>
-                                        </div>
-                                    </div>
-                                )}
-
-                                {/* Polling Status Indicator in Sidebar */}
-                                {isPollingSubscription && (
-                                    <div className="mt-4 px-2">
-                                        <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-3">
-                                            <div className="flex items-center gap-2">
-                                                <div className="animate-spin w-3 h-3 border-2 border-blue-400 border-t-transparent rounded-full"></div>
-                                                <p className="text-blue-300 text-xs">
-                                                    Checking payment...
-                                                </p>
-                                            </div>
                                         </div>
                                     </div>
                                 )}
