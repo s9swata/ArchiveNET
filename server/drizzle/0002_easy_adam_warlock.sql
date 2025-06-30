@@ -1,0 +1,1 @@
+ALTER TABLE "keys" DROP CONSTRAINT "keys_instance_key_hash_unique";

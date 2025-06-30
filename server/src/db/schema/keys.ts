@@ -24,7 +24,7 @@ export const keysTable = pgTable(
 		clerkId: text("clerk_id")
 			.notNull()
 			.references(() => usersTable.clerkId, { onDelete: "cascade" }),
-		instanceKeyHash: text("instance_key_hash").notNull().unique(),
+		instanceKeyHash: text("instance_key_hash").notNull(),
 		arweaveWalletAddress: text("arweave_wallet_address"),
 		isActive: boolean("is_active").notNull().default(false),
 		lastUsedAt: timestamp("last_used_at", { withTimezone: true }),

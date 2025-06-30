@@ -15,6 +15,13 @@
       "when": 1750880134220,
       "tag": "0001_faulty_ultragirl",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1751302724582,
+      "tag": "0002_easy_adam_warlock",
+      "breakpoints": true
     }
   ]
 }
