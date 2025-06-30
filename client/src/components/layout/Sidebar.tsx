@@ -26,14 +26,16 @@ interface UserSubscription {
     isActive: boolean;
 }
 
+type ViewType = 'dashboard' | 'subscription' | 'onboarding';
+
 export function SidebarDemo() {
     const { getToken } = useAuth();
     const { user } = useUser();
     const [instances, setInstances] = useState<Instance[]>([]);
     const [subscription, setSubscription] = useState<UserSubscription | null>(null);
-    const [activeView, setActiveView] = useState<'dashboard' | 'subscription' | 'onboarding'>('dashboard');
+    const [activeView, setActiveView] = useState<ViewType>('dashboard');
     const [expandedInstance, setExpandedInstance] = useState<string | null>(null);
-    const [showOnboarding, setShowOnboarding] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const handleGetInstances = async () => {
@@ -56,33 +58,39 @@ export function SidebarDemo() {
                 if (!subscriptionData || !subscriptionData.data) {
                     console.error("No subscription data found");
                     setSubscription({ plan: "Free", isActive: false });
-                    setShowOnboarding(true); // Show onboarding for free users
-                    setActiveView('onboarding');
                     return;
                 }
                 console.log("User Subscription:", subscriptionData.data);
                 setSubscription({ plan: subscriptionData.data.plan, isActive: subscriptionData.data.isActive });
-
-                // Check if user needs onboarding
-                const hasSubscription = subscriptionData.data.isActive;
-                const hasInstance = instances.length > 0;
-
-                if (!hasSubscription || !hasInstance) {
-                    setShowOnboarding(true);
-                    setActiveView('onboarding');
-                }
             } catch (error) {
                 console.error("Failed to fetch subscription:", error);
                 setSubscription({ plan: "Free", isActive: false });
-                setShowOnboarding(true);
-                setActiveView('onboarding');
             }
         };
 
-        handleGetInstances().then(() => {
-            fetchUserSubscription();
-        });
-    }, [getToken])
+        const initializeData = async () => {
+            setIsLoading(true);
+            await handleGetInstances();
+            await fetchUserSubscription();
+            setIsLoading(false);
+        };
+
+        initializeData();
+    }, [getToken]);
+
+    // Determine which view to show based on user status
+    useEffect(() => {
+        if (!isLoading && subscription) {
+            const hasActiveSubscription = subscription.isActive;
+            const hasInstances = instances.length > 0;
+
+            if (!hasActiveSubscription || !hasInstances) {
+                setActiveView('onboarding');
+            } else {
+                setActiveView('dashboard');
+            }
+        }
+    }, [subscription, instances, isLoading]);
 
     const links = [
         {
@@ -92,6 +100,7 @@ export function SidebarDemo() {
                 <IconBrandTabler className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
             ),
             onClick: () => setActiveView('dashboard'),
+            disabled: !subscription?.isActive || instances.length === 0,
         },
         {
             label: "Manage Subscription",
@@ -100,8 +109,10 @@ export function SidebarDemo() {
                 <IconCreditCard className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
             ),
             onClick: () => setActiveView('subscription'),
+            disabled: false,
         },
     ];
+
     const [open, setOpen] = useState(false);
 
     const getDisplayName = () => {
@@ -125,6 +136,7 @@ export function SidebarDemo() {
             // Handle instance creation
             console.log("Creating instance...");
             // This would trigger the instance creation API call
+            // After successful creation, refresh the instances
         }
     };
 
@@ -134,25 +146,34 @@ export function SidebarDemo() {
         return 3;
     };
 
-    // Placeholder setup instructions - you can edit this later
-    const setupInstructions = `# Clone the repository
-git clone https://github.com/s9swata/archivenet.git && cd mcp
+    // Setup instructions for the dashboard
+    const setupInstructions = `# Install ArchiveNET MCP globally
+npm install -g @s9swata/archivenet-mcp
 
-# Install mcp
-npm install
+# Configure your environment
+archivenet-edit-env --interactive
 
-# Configure ENDPOINTS
-npm run edit-env 
+# Setup for your preferred LLM
+archivenet-setup-mcp claude    # For Claude Desktop
+archivenet-setup-mcp cursor    # For Cursor IDE
 
 # Start using ArchiveNET
-archivenet connect`;
+# Your MCP server is now ready!`;
 
     const renderMainContent = () => {
+        if (isLoading) {
+            return (
+                <div className="flex items-center justify-center min-h-[400px]">
+                    <div className="animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full"></div>
+                </div>
+            );
+        }
+
         if (activeView === 'subscription') {
             return <SubscriptionManagement currentPlan={subscription?.plan} />;
         }
 
-        if (activeView === 'onboarding' || showOnboarding) {
+        if (activeView === 'onboarding') {
             return (
                 <OnboardingFlow
                     currentStep={getCurrentOnboardingStep()}
@@ -163,7 +184,7 @@ archivenet connect`;
             );
         }
 
-        // Default dashboard view
+        // Dashboard view - only shown for subscribed users with instances
         return (
             <>
                 {/* Project Header */}
@@ -253,7 +274,7 @@ archivenet connect`;
                             ) : (
                                 <div className="text-center py-8">
                                     <p className="text-neutral-400">
-                                        {instances === undefined ? 'Loading instances...' : 'No instances found'}
+                                        No instances found. Please complete the onboarding process.
                                     </p>
                                 </div>
                             )}
@@ -283,8 +304,14 @@ archivenet connect`;
                                     {links.map((link, idx) => (
                                         <div
                                             key={idx}
-                                            onClick={link.onClick}
-                                            className="flex items-center justify-start gap-2 group/sidebar py-2 cursor-pointer"
+                                            onClick={link.disabled ? undefined : link.onClick}
+                                            className={`flex items-center justify-start gap-2 group/sidebar py-2 cursor-pointer ${
+                                                link.disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-neutral-700/50 rounded-lg px-2'
+                                            } ${
+                                                activeView === (link.label === 'Dashboard' ? 'dashboard' : 'subscription') 
+                                                    ? 'bg-neutral-700 rounded-lg px-2' 
+                                                    : ''
+                                            }`}
                                         >
                                             {link.icon}
                                             <span className={`text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0 ${open ? 'opacity-100' : 'opacity-0'}`}>
@@ -293,6 +320,17 @@ archivenet connect`;
                                         </div>
                                     ))}
                                 </div>
+
+                                {/* Onboarding Status Indicator */}
+                                {(!subscription?.isActive || instances.length === 0) && (
+                                    <div className="mt-4 px-2">
+                                        <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-3">
+                                            <p className="text-yellow-300 text-xs">
+                                                ⚠️ Complete onboarding to access all features
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
                             {/* Enhanced User section at bottom */}
@@ -314,7 +352,9 @@ archivenet connect`;
                                             {getDisplayName()}
                                         </div>
                                         <div className="text-md text-white truncate">
-                                            <span className="text-green-500">{getSubscriptionDisplay()}</span> Plan
+                                            <span className={subscription?.isActive ? "text-green-500" : "text-yellow-500"}>
+                                                {getSubscriptionDisplay()}
+                                            </span> Plan
                                         </div>
                                     </div>
                                 </div>
