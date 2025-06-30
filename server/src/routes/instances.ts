@@ -7,7 +7,7 @@ import { auth } from "../middlewares/auth.js";
 const router = Router();
 
 // Apply auth middleware to all routes
-//router.use(auth);
+router.use(auth);
 
 /**
  * GET /instances
