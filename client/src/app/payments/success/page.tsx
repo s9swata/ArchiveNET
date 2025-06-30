@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useAuth } from "@clerk/nextjs"
 import Navbar from "@/components/ui/Navbar"
-import { createNewApiKey, deployArweaveContract } from "@/lib/api"
+import { deployArweaveContract } from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { CodeBlock } from "@/components/ui/code-block"
@@ -26,7 +26,6 @@ export default function SuccessPage() {
                 console.error("Token is not available, user might not be signed in")
                 return;
             }
-            await createNewApiKey(token);
             console.log("Created API Key:");
             const deployedContract = await deployArweaveContract(token);
 
