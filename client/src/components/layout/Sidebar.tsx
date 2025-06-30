@@ -62,11 +62,11 @@ export function SidebarDemo() {
                 }
                 console.log("User Subscription:", subscriptionData.data);
                 setSubscription({ plan: subscriptionData.data.plan, isActive: subscriptionData.data.isActive });
-                
+
                 // Check if user needs onboarding
                 const hasSubscription = subscriptionData.data.isActive;
-                const hasInstance = instancesData?.data?.length > 0;
-                
+                const hasInstance = instances.length > 0;
+
                 if (!hasSubscription || !hasInstance) {
                     setShowOnboarding(true);
                     setActiveView('onboarding');
@@ -191,7 +191,7 @@ archivenet connect`;
                                 instances.map((instance) => (
                                     <div key={instance.id} className="rounded-lg bg-neutral-700/50 hover:bg-neutral-700 transition-colors">
                                         {/* Instance Header */}
-                                        <div 
+                                        <div
                                             className="flex items-center justify-between p-4 cursor-pointer"
                                             onClick={() => toggleInstanceExpansion(instance.id)}
                                         >
@@ -234,14 +234,14 @@ archivenet connect`;
                                                         <p className="text-neutral-300 text-sm mb-3">
                                                             Follow these steps to connect your instance to your development environment:
                                                         </p>
-                                                        <CodeBlock 
+                                                        <CodeBlock
                                                             code={setupInstructions}
                                                             language="bash"
                                                             filename="setup-instructions.sh"
                                                         />
                                                         <div className="mt-3 p-3 bg-blue-900/20 border border-blue-500/30 rounded-lg">
                                                             <p className="text-blue-300 text-sm">
-                                                                💡 <strong>Tip:</strong> Make sure to replace <code className="bg-blue-800/30 px-1 rounded">&lt;your-instance-id&gt;</code> and <code className=\"bg-blue-800/30 px-1 rounded">&lt;your-api-key&gt;</code> with your actual values.
+                                                                💡 <strong>Tip:</strong> Make sure to replace <code className="bg-blue-800/30 px-1 rounded">&lt;your-instance-id&gt;</code> and <code className="bg-blue-800/30 px-1 rounded">&lt;your-api-key&gt;</code> with your actual values.
                                                             </p>
                                                         </div>
                                                     </div>
