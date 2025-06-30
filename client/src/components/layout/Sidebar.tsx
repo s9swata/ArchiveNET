@@ -139,7 +139,7 @@ export function SidebarDemo() {
     const toggleInstanceExpansion = (instanceId: string) => {
         setExpandedInstance(expandedInstance === instanceId ? null : instanceId);
     };
-
+    //@@ts-ignore - ignore this step variable as it is not used
     const handleStepComplete = (_step: number) => {
         // Currently not implemented - placeholder for future functionality
         console.log("Step completion handler called");

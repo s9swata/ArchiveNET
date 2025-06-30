@@ -219,7 +219,7 @@ export const OnboardingFlow = ({
         }
       },
       buttonText: "Choose Plan",
-      details: "Select from Basic, Pro, or Enterprise plans to unlock ArchiveNET's powerful memory management features."
+      details: "Select from Basic, Pro, or Enterprise plans to unlock ArchiveNET&apos;s powerful memory management features."
     },
     {
       id: 2,
@@ -394,7 +394,7 @@ export const OnboardingFlow = ({
                               <div>
                                 <p className="text-blue-300 font-semibold">Checking Payment Status...</p>
                                 <p className="text-blue-400 text-sm">
-                                  We're monitoring your payment. This will update automatically once your subscription is processed.
+                                  We&apos;re monitoring your payment. This will update automatically once your subscription is processed.
                                   (Attempt {pollingAttemptsRef.current}/{MAX_POLLING_ATTEMPTS})
                                 </p>
                               </div>
@@ -501,7 +501,7 @@ export const OnboardingFlow = ({
 
                               <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-4">
                                 <p className="text-yellow-300 text-sm">
-                                  <strong>⚠️ Important:</strong> Save your Session Key securely. You'll need it to configure your MCP client in the next step.
+                                  <strong>⚠️ Important:</strong> Save your Session Key securely. You&apos;ll need it to configure your MCP client in the next step.
                                 </p>
                               </div>
                             </div>
@@ -595,7 +595,7 @@ export const OnboardingFlow = ({
                   Onboarding Complete! 🎉
                 </h3>
                 <p className="text-green-300">
-                  You're all set! Your ArchiveNET system is ready to revolutionize how you manage AI memory and context.
+                  You&apos;re all set! Your ArchiveNET system is ready to revolutionize how you manage AI memory and context.
                 </p>
                 <Button
                   onClick={() => router.push('/dashboard')}
