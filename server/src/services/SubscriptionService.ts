@@ -137,7 +137,7 @@ export async function getUserSubscription(clerkId: string) {
 	}
 }
 
-export async function updateLastUdedAt(userId: string): Promise<void> {
+export async function updateLastUsedAt(userId: string): Promise<void> {
 	try {
 		await db
 			.update(keysTable)
