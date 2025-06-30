@@ -5,6 +5,8 @@ import { errorResponse, successResponse } from "../utils/responses.js";
 
 const router = Router();
 
+router.use(auth); // Apply auth middleware to all routes
+
 /**
  * POST /deploy/
  * Deploy a new Eizen contract for an authenticated user
@@ -38,7 +40,7 @@ router.post("/", async (req: Request, res: Response) => {
 	try {
 		// Extract user ID from authenticated request
 		// This is set by the auth middleware after JWT validation
-		const userId = req.userId || req.body.userId;
+		const userId = req.userId;
 		if (!userId) {
 			res.status(400).json({
 				message: "User ID is required for contract deployment",

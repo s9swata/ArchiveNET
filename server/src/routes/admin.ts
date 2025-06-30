@@ -213,7 +213,7 @@ router.get("/memories/count/:contractId", async (req, res) => {
  *   "message": "Eizen contract deployed successfully"
  * }
  */
-router.post("/deploy", async (_req, res) => {
+router.post("/deploy", auth, async (_req, res) => {
 	try {
 		const deployResult = await EizenService.deployNewContract();
 		const contractId = deployResult.contractId;
@@ -261,7 +261,7 @@ router.post("/deploy", async (_req, res) => {
  *   "message": "Deploy service test completed successfully"
  * }
  */
-router.post("/test-deploy", async (req, res) => {
+router.post("/test-deploy", auth, async (req, res) => {
 	try {
 		const { userId } = req.body;
 
