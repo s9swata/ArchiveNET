@@ -1,67 +1,178 @@
-# Monorepo
+# ArchiveNET
 
-This is a monorepo containing multiple projects and tools.
+> **Where AI memories live forever** - A decentralized semantic memory platform powered by blockchain and vector search
 
-## Projects
+[![Hackathon Project](https://img.shields.io/badge/Hackathon-2025-ff6b6b?style=for-the-badge&logo=code&logoColor=white)](https://github.com/your-username/ArchiveNET)
+[![Arweave](https://img.shields.io/badge/Powered%20by-Arweave-9945FF?style=for-the-badge&logo=arweave&logoColor=white)](https://arweave.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
+[![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)](https://redis.io/)
 
-### MCP (Model Context Protocol)
-Located in `mcp/` - An MCP server for context insertion and search functionality.
+[![License](https://img.shields.io/badge/License-ISC-blue.svg?style=flat-square)](LICENSE)
+[![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen?style=flat-square)](https://github.com/your-username/ArchiveNET)
+[![AI Powered](https://img.shields.io/badge/AI-Powered-orange?style=flat-square&logo=openai)](https://github.com/your-username/ArchiveNET)
+[![Blockchain](https://img.shields.io/badge/Blockchain-Decentralized-purple?style=flat-square)](https://github.com/your-username/ArchiveNET)
+
+ArchiveNET is a revolutionary decentralized memory management platform that combines the power of AI embeddings with blockchain permanence. Built on Arweave, it provides enterprise-grade semantic search capabilities through advanced vector database technology, enabling applications to store, search, and retrieve contextual information with unprecedented permanence and accuracy.
+
+## Key Features
+
+- **Semantic Memory**: AI-powered contextual memory storage and retrieval
+- **Blockchain Persistence**: Permanent storage on Arweave blockchain
+- **Vector Search**: State-of-the-art HNSW algorithm for similarity search
+- **High Performance**: O(log N) search complexity for millions of vectors
+- **Decentralized**: No single point of failure or censorship
+- **Rich Metadata**: Comprehensive metadata support for enhanced search
+- **Enterprise-Ready**: Production-grade API with authentication and monitoring
+
+## Architecture
+
+![ArchiveNET](Docs/imgs/arch.png)
+
+ArchiveNET is a comprehensive monorepo consisting of four main components:
+
+### **Eizen** - Vector Database Engine
+
+The world's first decentralized vector engine built on Arweave blockchain, implementing the Hierarchical Navigable Small Worlds (HNSW) algorithm for approximate nearest neighbor search.
+
+**Key Features:**
+
+- HNSW algorithm with O(log N) complexity
+- Blockchain-based persistence via HollowDB
+- Protobuf encoding for efficient storage
+- Database-agnostic interface
+- Handles millions of high-dimensional vectors
+
+### **API** - Backend Service
+
+A robust Express.js API service providing semantic memory management with AI-powered search capabilities.
+
+**Stack:**
+
+- Express.js with TypeScript
+- Neon PostgreSQL with Drizzle ORM
+- EizenDB for vector operations
+- Redis for caching
+- JWT authentication
+- Comprehensive validation with Zod
+
+### **Frontend** - Web Interface
+
+A modern Next.js application providing an intuitive interface for memory management and search operations.
 
 **Features:**
-- Insert and search personal/professional context data
-- Multi-LLM support (Claude Desktop, Cursor IDE)
-- Configurable API endpoints
-- Bearer token authentication
-- TypeScript implementation with full type safety
 
-**Quick Start:**
-```bash
-cd mcp
-npm install
-npm run edit-env --interactive
-npm run setup claude  # or cursor
+- React-based UI with TypeScript
+- Real-time search capabilities
+- Memory visualization
+- User dashboard
+- Responsive design
+
+### **Eva** - MCP Agent
+
+The central Model Context Protocol (MCP) server that orchestrates memory operations and provides intelligent context management.
+
+## Quick Start
+
+### Prerequisites
+
+- Node.js 18+
+- Docker & Docker Compose
+- PostgreSQL database
+- Redis server
+- Arweave wallet
+
+### Installation
+
+1. **Clone the repository**:
+
+   ```bash
+   git clone https://github.com/s9swata/archivenet.git
+   cd ArchiveNET
+   ```
+
+2. **Start with Docker Compose**:
+
+   ```bash
+   docker-compose up -d
+   ```
+
+3. **Manual setup** (alternative):
+
+   ```bash
+   # API Setup
+   cd API
+   npm install
+   npm run build
+   npx drizzle-kit push
+   npm run dev
+
+   # Frontend Setup
+   cd ../client
+   npm install
+   npm run dev
+
+
+### Configuration
+
+Create `.env` files in respective directories:
+
+**API/.env**:
+
+```env
+DATABASE_URL=your_postgres_url
+REDIS_URL=redis://localhost:6379
+JWT_SECRET=your_jwt_secret
+ARWEAVE_WALLET_PATH=./data/wallet.json
 ```
 
-See [mcp/README.md](mcp/README.md) for detailed documentation.
 
-## Structure
+### API Integration
 
-```
-/
-├── mcp/                    # MCP Context Server
-│   ├── src/               # TypeScript source files
-│   ├── scripts/           # Setup and utility scripts
-│   ├── dist/              # Compiled JavaScript files
-│   ├── package.json       # MCP package configuration
-│   └── README.md          # MCP documentation
-└── README.md              # This file
-```
+```javascript
+// Store a memory
+const response = await fetch("/api/memories", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    content: "Project discussion about AI integration",
+    metadata: { project: "AI-Platform", priority: "high" },
+  }),
+});
 
-## Getting Started
-
-Each project in this monorepo is self-contained with its own dependencies and build process. Navigate to the specific project directory and follow its README for setup instructions.
-
-## Development
-
-Each project can be developed independently:
-
-```bash
-# Work on MCP server
-cd mcp
-npm install
-npm run dev
-
-# Build all projects (if needed)
-cd mcp && npm run build
+// Search memories
+const searchResults = await fetch("/api/memories/search", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    query: "AI project discussions",
+    limit: 10,
+  }),
+});
 ```
 
-## Contributing
+### Contributing
 
-When contributing to this monorepo:
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-1. Navigate to the specific project directory
-2. Follow the project's development guidelines
-3. Test your changes within that project's context
-4. Update relevant documentation
+## Documentation
 
-Each project maintains its own changelog and versioning.
+- [Developer Guide](./Docs/DEVELOPER_GUIDE.md) - Comprehensive API documentation
+- [Backend Integration](./Docs/BACKEND_INTEGRATION_GUIDE.md) - Backend implementation examples
+- [Eizen Engine](./Docs/Eizen.md) - Vector database engine details
+- [HNSW Guide](./Docs/HNSW_GUIDE.md) - Algorithm implementation details
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+**Made with ❤️ for the decentralized AI future**
