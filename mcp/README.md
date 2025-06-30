@@ -54,8 +54,7 @@ npm run setup cursor    # For Cursor IDE
    
    **Option C: Direct Updates**
    ```bash
-   npm run edit-env INSERT_CONTEXT_ENDPOINT=https://your-api.com/insert
-   npm run edit-env SEARCH_CONTEXT_ENDPOINT=https://your-api.com/search
+   npm run edit-env BASE_API_URL=https://your-api.com
    npm run edit-env TOKEN=your-bearer-token
    ```
 
@@ -81,8 +80,7 @@ npm run setup cursor    # For Cursor IDE
          "command": "node",
          "args": ["/absolute/path/to/your/project/dist/index.js"],
          "env": {
-           "INSERT_CONTEXT_ENDPOINT": "https://your-api.com/insert",
-           "SEARCH_CONTEXT_ENDPOINT": "https://your-api.com/search",
+           "BASE_API_URL": "https://your-api.com",
            "TOKEN": "your-bearer-token",
            "API_TIMEOUT": "30000"
          }
@@ -104,8 +102,7 @@ npm run setup cursor    # For Cursor IDE
          "command": "node",
          "args": ["/absolute/path/to/your/project/dist/index.js"],
          "env": {
-           "INSERT_CONTEXT_ENDPOINT": "https://your-api.com/insert",
-           "SEARCH_CONTEXT_ENDPOINT": "https://your-api.com/search",
+           "BASE_API_URL": "https://your-api.com",
            "TOKEN": "your-bearer-token",
            "API_TIMEOUT": "30000"
          }
@@ -131,13 +128,12 @@ This will guide you through setting up all required and optional environment var
 #### Direct Updates
 ```bash
 # Set individual variables
-npm run edit-env INSERT_CONTEXT_ENDPOINT=https://api.example.com/insert
-npm run edit-env SEARCH_CONTEXT_ENDPOINT=https://api.example.com/search
+npm run edit-env BASE_API_URL=https://api.example.com
 npm run edit-env TOKEN=your-bearer-token
 npm run edit-env API_TIMEOUT=60000
 
 # Set multiple variables at once
-npm run edit-env INSERT_CONTEXT_ENDPOINT=https://api.example.com/insert SEARCH_CONTEXT_ENDPOINT=https://api.example.com/search
+npm run edit-env BASE_API_URL=https://api.example.com TOKEN=your-bearer-token
 ```
 
 #### Show Current Configuration
@@ -157,8 +153,7 @@ npm run edit-env --help
 
 ### Environment Variables
 
-- **INSERT_CONTEXT_ENDPOINT** (required): API endpoint for inserting context
-- **SEARCH_CONTEXT_ENDPOINT** (required): API endpoint for searching context  
+- **BASE_API_URL** (required): Base API URL for ArchiveNET (e.g., https://api.archivenet.com)
 - **TOKEN** (optional): Bearer token for authentication
 - **API_TIMEOUT** (optional): Request timeout in milliseconds (default: 30000)
 
@@ -199,7 +194,7 @@ npx edit-env --interactive
 
 Your API endpoints should implement the following interfaces:
 
-### Insert Endpoint (POST)
+### Insert Endpoint (POST {BASE_API_URL}/memories/insert)
 **Request Headers:**
 ```
 Content-Type: application/json
@@ -228,7 +223,7 @@ Authorization: Bearer your-token-here
 }
 ```
 
-### Search Endpoint (POST)
+### Search Endpoint (POST {BASE_API_URL}/memories/search)
 **Request Headers:**
 ```
 Content-Type: application/json
