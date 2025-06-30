@@ -95,9 +95,14 @@ export function Web3Payment() {
             console.error("Token is not available, user might not be signed in");
             return;
         }
+        try {
+            await hitPaymentWebhook(token, sendTxData, selectedPlan?.id || "", 1000);
+            console.log("Payment webhook hit successfully");
+        }
+        catch (err) {
+            console.error("Error hitting payment webhook:", err);
+        }
 
-        await hitPaymentWebhook(token, sendTxData, selectedPlan?.id || "", 1000);
-        console.log("Payment webhook hit successfully");
         router.push("/dashboard");
     };
 
