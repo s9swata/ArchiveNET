@@ -12,6 +12,7 @@ import { getInstances, getUserSubscription } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CodeBlock } from "@/components/ui/code-block";
 import { SubscriptionManagement } from "./SubscriptionManagement";
+import { OnboardingFlow } from "./OnboardingFlow";
 
 interface Instance {
     id: string;
@@ -30,8 +31,9 @@ export function SidebarDemo() {
     const { user } = useUser();
     const [instances, setInstances] = useState<Instance[]>([]);
     const [subscription, setSubscription] = useState<UserSubscription | null>(null);
-    const [activeView, setActiveView] = useState<'dashboard' | 'subscription'>('dashboard');
+    const [activeView, setActiveView] = useState<'dashboard' | 'subscription' | 'onboarding'>('dashboard');
     const [expandedInstance, setExpandedInstance] = useState<string | null>(null);
+    const [showOnboarding, setShowOnboarding] = useState(false);
 
     useEffect(() => {
         const handleGetInstances = async () => {
@@ -54,18 +56,32 @@ export function SidebarDemo() {
                 if (!subscriptionData || !subscriptionData.data) {
                     console.error("No subscription data found");
                     setSubscription({ plan: "Free", isActive: false });
+                    setShowOnboarding(true); // Show onboarding for free users
+                    setActiveView('onboarding');
                     return;
                 }
                 console.log("User Subscription:", subscriptionData.data);
                 setSubscription({ plan: subscriptionData.data.plan, isActive: subscriptionData.data.isActive });
+                
+                // Check if user needs onboarding
+                const hasSubscription = subscriptionData.data.isActive;
+                const hasInstance = instancesData?.data?.length > 0;
+                
+                if (!hasSubscription || !hasInstance) {
+                    setShowOnboarding(true);
+                    setActiveView('onboarding');
+                }
             } catch (error) {
                 console.error("Failed to fetch subscription:", error);
-                setSubscription(null);
+                setSubscription({ plan: "Free", isActive: false });
+                setShowOnboarding(true);
+                setActiveView('onboarding');
             }
         };
 
-        handleGetInstances();
-        fetchUserSubscription();
+        handleGetInstances().then(() => {
+            fetchUserSubscription();
+        });
     }, [getToken])
 
     const links = [
@@ -104,6 +120,20 @@ export function SidebarDemo() {
         setExpandedInstance(expandedInstance === instanceId ? null : instanceId);
     };
 
+    const handleStepComplete = (step: number) => {
+        if (step === 2) {
+            // Handle instance creation
+            console.log("Creating instance...");
+            // This would trigger the instance creation API call
+        }
+    };
+
+    const getCurrentOnboardingStep = () => {
+        if (!subscription?.isActive) return 1;
+        if (instances.length === 0) return 2;
+        return 3;
+    };
+
     // Placeholder setup instructions - you can edit this later
     const setupInstructions = `# Install ArchiveNET CLI
 npm install -g @archivenet/cli
@@ -120,6 +150,17 @@ archivenet connect`;
     const renderMainContent = () => {
         if (activeView === 'subscription') {
             return <SubscriptionManagement currentPlan={subscription?.plan} />;
+        }
+
+        if (activeView === 'onboarding' || showOnboarding) {
+            return (
+                <OnboardingFlow
+                    currentStep={getCurrentOnboardingStep()}
+                    hasSubscription={subscription?.isActive || false}
+                    hasInstance={instances.length > 0}
+                    onStepComplete={handleStepComplete}
+                />
+            );
         }
 
         // Default dashboard view
@@ -200,7 +241,7 @@ archivenet connect`;
                                                         />
                                                         <div className="mt-3 p-3 bg-blue-900/20 border border-blue-500/30 rounded-lg">
                                                             <p className="text-blue-300 text-sm">
-                                                                💡 <strong>Tip:</strong> Make sure to replace <code className="bg-blue-800/30 px-1 rounded">&lt;your-instance-id&gt;</code> and <code className=\"bg-blue-800/30 px-1 rounded">&lt;your-api-key&gt;</code> with your actual values.
+                                                                💡 <strong>Tip:</strong> Make sure to replace <code className="bg-blue-800/30 px-1 rounded">&lt;your-instance-id&gt;</code> and <code className="bg-blue-800/30 px-1 rounded">&lt;your-api-key&gt;</code> with your actual values.
                                                             </p>
                                                         </div>
                                                     </div>

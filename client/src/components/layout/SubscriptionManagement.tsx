@@ -152,13 +152,12 @@ const SubscriptionCard = ({ area, icon, title, description, currentPlan, recomme
                         </div>
                         <div className="mt-3">
                             {currentPlan ? (
-                                <Button variant="default" className="bg-blue-500 text-white w-full text-sm">
+                                <Button className="bg-blue-400 text-white w-full text-sm">
                                     Current Plan
                                 </Button>
                             ) : (
                                 <Button
-                                    variant="default"
-                                    className="bg-blue-500 hover:bg-blue-500/70 text-white w-full text-sm cursor-pointer"
+                                    className="bg-blue-400 hover:bg-blue-500 text-white w-full text-sm cursor-pointer"
                                     onClick={onClick}
                                 >
                                     Upgrade to {title}
