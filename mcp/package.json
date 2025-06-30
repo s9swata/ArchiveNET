@@ -29,9 +29,9 @@
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "archivenet-mcp": "dist/index.js",
-    "archivenet-setup-mcp": "scripts/setup-mcp.js",
-    "archivenet-edit-env": "scripts/edit-env.js"
+    "archivenet": "dist/index.js",
+    "setup-mcp": "scripts/setup-mcp.js",
+    "edit-env": "scripts/edit-env.js"
   },
   "files": [
     "dist/",
@@ -47,11 +47,6 @@
     "dev": "tsx src/index.ts",
     "setup": "node scripts/setup-mcp.js",
     "edit-env": "node scripts/edit-env.js",
-    "global:install": "node scripts/setup-global.js install",
-    "global:uninstall": "node scripts/setup-global.js uninstall",
-    "global:link": "node scripts/setup-global.js link",
-    "global:unlink": "node scripts/setup-global.js unlink",
-    "global:status": "node scripts/setup-global.js status",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepublishOnly": "npm run build"
   },

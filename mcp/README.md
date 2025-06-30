@@ -13,33 +13,12 @@ A Model Context Protocol (MCP) server that provides context insertion and search
 - **Error Handling**: Comprehensive error handling and validation
 - **Metadata Support**: Rich metadata including context, tags, timestamps, and client info
 - **Bearer Token Authentication**: Optional Bearer token authentication
-- **Global Installation**: Install as global commands for easy access
 
 ## Quick Setup
 
-### Option 1: Global Installation (Recommended)
+### Automated Setup (Recommended)
 
-Install ArchiveNET MCP globally for easy access from anywhere:
-
-```bash
-# 1. Clone and navigate to MCP directory
-cd mcp
-
-# 2. Install dependencies
-npm install
-
-# 3. Configure environment (interactive)
-npm run edit-env --interactive
-
-# 4. Install globally
-npm run global:install
-
-# 5. Setup for your LLM
-archivenet-setup-mcp claude    # For Claude Desktop
-archivenet-setup-mcp cursor    # For Cursor IDE
-```
-
-### Option 2: Local Development Setup
+Use the unified setup script to automatically configure your preferred LLM:
 
 ```bash
 # 1. Install dependencies
@@ -53,30 +32,89 @@ npm run setup claude    # For Claude Desktop
 npm run setup cursor    # For Cursor IDE
 ```
 
-## Global Commands
+### Manual Setup
 
-After global installation, these commands are available system-wide:
+1. **Install Dependencies**
+   ```bash
+   npm install
+   ```
 
-- **`archivenet-mcp`** - Run the MCP server
-- **`archivenet-setup-mcp`** - Setup MCP for Claude/Cursor
-- **`archivenet-edit-env`** - Configure environment variables
+2. **Configure Environment**
+   
+   **Option A: Interactive Configuration (Recommended)**
+   ```bash
+   npm run edit-env --interactive
+   ```
+   
+   **Option B: Manual Configuration**
+   ```bash
+   cp .env.example .env
+   # Edit .env with your API endpoints
+   ```
+   
+   **Option C: Direct Updates**
+   ```bash
+   npm run edit-env INSERT_CONTEXT_ENDPOINT=https://your-api.com/insert
+   npm run edit-env SEARCH_CONTEXT_ENDPOINT=https://your-api.com/search
+   npm run edit-env TOKEN=your-bearer-token
+   ```
 
-### Global Management Commands
+3. **Build the Server**
+   ```bash
+   npm run build
+   ```
 
-```bash
-# Install globally
-npm run global:install
+4. **Configure Your LLM**
 
-# Check installation status
-npm run global:status
+   #### For Claude Desktop
+   
+   Add to your Claude Desktop config file:
+   
+   **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+   **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+   **Linux**: `~/.config/Claude/claude_desktop_config.json`
+   
+   ```json
+   {
+     "mcpServers": {
+       "archivenet": {
+         "command": "node",
+         "args": ["/absolute/path/to/your/project/dist/index.js"],
+         "env": {
+           "INSERT_CONTEXT_ENDPOINT": "https://your-api.com/insert",
+           "SEARCH_CONTEXT_ENDPOINT": "https://your-api.com/search",
+           "TOKEN": "your-bearer-token",
+           "API_TIMEOUT": "30000"
+         }
+       }
+     }
+   }
+   ```
 
-# Uninstall globally
-npm run global:uninstall
+   #### For Cursor IDE
+   
+   Add to your Cursor MCP config file:
+   
+   **All Platforms**: `~/.cursor/mcp.json`
+   
+   ```json
+   {
+     "mcpServers": {
+       "archivenet": {
+         "command": "node",
+         "args": ["/absolute/path/to/your/project/dist/index.js"],
+         "env": {
+           "INSERT_CONTEXT_ENDPOINT": "https://your-api.com/insert",
+           "SEARCH_CONTEXT_ENDPOINT": "https://your-api.com/search",
+           "TOKEN": "your-bearer-token",
+           "API_TIMEOUT": "30000"
+         }
+       }
+     }
+   }
+   ```
 
-# Development linking (for local development)
-npm run global:link
-npm run global:unlink
-```
+5. **Restart Your LLM**
 
 ## Environment Configuration
 
@@ -86,31 +124,35 @@ The `edit-env` script provides multiple ways to configure your API endpoints:
 
 #### Interactive Mode (Recommended)
 ```bash
-# Global installation
-archivenet-edit-env --interactive
-
-# Local installation
 npm run edit-env --interactive
 ```
+This will guide you through setting up all required and optional environment variables.
 
 #### Direct Updates
 ```bash
-# Global installation
-archivenet-edit-env INSERT_CONTEXT_ENDPOINT=https://api.example.com/insert
-archivenet-edit-env SEARCH_CONTEXT_ENDPOINT=https://api.example.com/search
-
-# Local installation
+# Set individual variables
 npm run edit-env INSERT_CONTEXT_ENDPOINT=https://api.example.com/insert
 npm run edit-env SEARCH_CONTEXT_ENDPOINT=https://api.example.com/search
+npm run edit-env TOKEN=your-bearer-token
+npm run edit-env API_TIMEOUT=60000
+
+# Set multiple variables at once
+npm run edit-env INSERT_CONTEXT_ENDPOINT=https://api.example.com/insert SEARCH_CONTEXT_ENDPOINT=https://api.example.com/search
 ```
 
 #### Show Current Configuration
 ```bash
-# Global installation
-archivenet-edit-env --show
-
-# Local installation
 npm run edit-env --show
+```
+
+#### Reset to Defaults
+```bash
+npm run edit-env --reset
+```
+
+#### Help
+```bash
+npm run edit-env --help
 ```
 
 ### Environment Variables
@@ -122,25 +164,35 @@ npm run edit-env --show
 
 ## Setup Script Usage
 
-### Global Installation
+The unified setup script supports both Claude and Cursor:
+
 ```bash
 # Setup for Claude Desktop
-archivenet-setup-mcp claude
+scripts/setup-mcp.js claude
 
 # Setup for Cursor IDE
-archivenet-setup-mcp cursor
+scripts/setup-mcp.js cursor
 
 # Show help
-archivenet-setup-mcp --help
+scripts/setup-mcp.js --help
 ```
 
-### Local Installation
-```bash
-# Setup for Claude Desktop
-npm run setup claude
+### Using with npm/npx
 
-# Setup for Cursor IDE
-npm run setup cursor
+```bash
+# Install globally
+npm install -g archivenet
+
+# Configure environment
+edit-env --interactive
+
+# Run setup
+setup-mcp claude
+
+# Or use without installing
+npx archivenet
+npx setup-mcp claude
+npx edit-env --interactive
 ```
 
 ## API Endpoint Requirements
@@ -249,14 +301,6 @@ The server is designed to work seamlessly with AI assistants that support the Mo
 - `npm run setup <llm>`: Run the automated setup for specified LLM
 - `npm run edit-env`: Configure environment variables
 
-## Global Installation Management
-
-- `npm run global:install`: Install globally as `archivenet-mcp`
-- `npm run global:status`: Check global installation status
-- `npm run global:uninstall`: Remove global installation
-- `npm run global:link`: Create development link
-- `npm run global:unlink`: Remove development link
-
 ## Supported LLMs
 
 - **Claude Desktop**: Full support with automated configuration
@@ -281,11 +325,11 @@ Bearer token authentication is optional. If your API endpoints don't require aut
 
 If the MCP server doesn't connect to your LLM:
 
-1. **Check configuration**: Use `archivenet-edit-env --show` to verify your settings
+1. **Check configuration**: Use `npm run edit-env --show` to verify your settings
 2. **Verify endpoints**: Test your API endpoints independently
 3. **Check logs**: Look at your LLM's logs for error messages
 4. **Restart completely**: Completely restart your LLM after configuration changes
-5. **Test server**: Run `archivenet-mcp` to check for server errors
+5. **Test server**: Run `node dist/index.js` to check for server errors
 6. **Permissions**: Ensure your LLM has permission to execute Node.js scripts
 
 ## Example Usage
@@ -308,18 +352,18 @@ The MCP server will automatically handle saving and retrieving this information 
 
 ```bash
 # Install globally
-npm install -g @s9swata/archivenet-mcp
+npm install -g archivenet
 
 # Configure environment interactively
-archivenet-edit-env --interactive
+edit-env --interactive
 
 # Setup for your preferred LLM
-archivenet-setup-mcp claude
+setup-mcp claude
 # or
-archivenet-setup-mcp cursor
+setup-mcp cursor
 
 # Start the server manually if needed
-archivenet-mcp
+archivenet
 ```
 
 ## Project Structure
@@ -330,8 +374,7 @@ archivenet/
 ├── dist/                   # Compiled JavaScript files
 ├── scripts/                # Setup and utility scripts
 │   ├── setup-mcp.js       # Unified setup script for Claude and Cursor
-│   ├── edit-env.js        # Environment configuration editor
-│   └── setup-global.js    # Global installation management
+│   └── edit-env.js        # Environment configuration editor
 ├── .env.example           # Environment variables template
 ├── package.json           # Package configuration
 ├── tsconfig.json          # TypeScript configuration
