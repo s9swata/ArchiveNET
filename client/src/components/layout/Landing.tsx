@@ -11,6 +11,8 @@ import { useRouter } from "next/navigation";
 import { WhyChooseArchiveNet } from "./WhyChoose";
 import { GlassBadge } from "../ui/GlassBadge";
 import { HeroFloatingParticles } from "../ui/FloatingParticles";
+import { BoltBadge } from "../ui/BoltBadge";
+import { Bolt } from "lucide-react";
 
 export const Landing = () => {
     const router = useRouter();
@@ -33,12 +35,15 @@ export const Landing = () => {
                 <NavBar />
 
                 {/* Glass Badge - Responsive positioning */}
-                <div className="absolute top-30 sm:top-24 left-1/2 transform -translate-x-1/2 z-30 px-4">
+                <div className="absolute top-30 sm:top-24 left-1/2 transform -translate-x-1/2 z-30 px-4 flex flex-col justify-center items-center gap-5">
                     <GlassBadge
                         text="Get Universal Context Now!"
                         emoji="🚀"
                         onClick={() => router.push('/get-started')}
                     />
+                    <div>
+                        <BoltBadge />
+                    </div>
                 </div>
 
                 {/* Main Hero Content */}
