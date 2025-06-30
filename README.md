@@ -30,7 +30,7 @@ ArchiveNET is a revolutionary decentralized memory management platform that comb
 
 ## Architecture
 
-![ArchiveNET](Docs/imgs/arch.png)
+![ArchiveNET](/img/arch.png)
 
 ArchiveNET is a comprehensive monorepo consisting of four main components:
 
